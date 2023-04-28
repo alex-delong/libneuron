@@ -1,6 +1,6 @@
-class Edge;
-class Neuron;
 namespace LibNeuron {
+    class Edge;
+    class Neuron;
     // a connection to a neuron
     class Edge {
         // the neuron recieving the signal 
