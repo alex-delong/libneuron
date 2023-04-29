@@ -15,9 +15,7 @@ namespace LibNeuron {
             // ptr arg is valid
         // post-conditions:
             // tip == argument
-        Edge(Neuron*, float);
-        
-        
+        Edge(Neuron*, float); 
         // weight setter
         void set_weight(float);
         // tip setter
@@ -39,6 +37,8 @@ namespace LibNeuron {
         Neuron();
         // constructor to connect to an array of neurons
         Neuron(Neuron*, unsigned int);
+        // output edges setter
+        void set_edges(Neuron*, unsigned int);
         // add the argument to the input signal
         void signal_add(float);
         // a non-linear function that processes the signal

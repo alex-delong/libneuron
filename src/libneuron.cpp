@@ -16,7 +16,6 @@ void Edge::transmit(float signal) {
 Edge::~Edge() {
     delete this->tip;
 }
-
 Neuron::Neuron() : 
     input_signal(0.0), 
     output_edges(nullptr), 
@@ -27,21 +26,27 @@ Neuron::Neuron(Neuron* arg_neuron_arr, unsigned int arg_sz) :
     output_edges(new Edge[arg_sz]), 
     sz(arg_sz) 
 {
-    for (int i = 0; i < sz; i++) {
+    for (int i = 0; i < arg_sz; i++) {
         output_edges[i].set_tip(arg_neuron_arr[i]);
     }    
+}
+void Neuron::set_edges(Neuron* arg_neuron_arr, unsigned int arg_sz) {
+    this->sz = arg_sz;
+    delete[] this->output_edges;
+    this->output_edges = new Edge[arg_sz];
+    for (int i = 0; i < arg_sz; i++) {
+        this->output_edges[i].set_tip(arg_neuron_arr[i]); 
+    }
 }
 void Neuron::signal_add(float arg_signal) {
     this->input_signal += arg_signal;
 }
-
 float Neuron::activation() {
     auto sigmoid = [](float x) -> float {
         return 1/(1 + exp(-x));
     };
     return sigmoid(this->input_signal);
 }
-
 void Neuron::fire() {
     for (int i = 0; i < this->sz; i++) {
         this->output_edges[i].transmit(this->activation());
