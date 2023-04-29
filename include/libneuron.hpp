@@ -8,14 +8,20 @@ namespace LibNeuron {
         // the coefficient of the signal
         float weight;
     public:
-        // contructor to connect to a Neuron
+        // default constructor
+        Edge();
+        // contructor to connect to a Neuron and set weight
         // pre-conditions:
-            // argument points to a valid Neuron
+            // ptr arg is valid
         // post-conditions:
             // tip == argument
-        Edge(Neuron*);
+        Edge(Neuron*, float);
+        
+        
         // weight setter
         void set_weight(float);
+        // tip setter
+        void set_tip(const Neuron&);
         // sends the weighted argument signal to the tip Neuron
         void transmit(float);
         ~Edge();
@@ -26,9 +32,13 @@ namespace LibNeuron {
         float input_signal;
         // an array of output Edges
         Edge* output_edges;
+        // output edges size
+        unsigned int sz;
     public:
+        // default constructor
+        Neuron();
         // constructor to connect to an array of neurons
-        Neuron(Neuron*);
+        Neuron(Neuron*, unsigned int);
         // add the argument to the input signal
         void signal_add(float);
         // a non-linear function that processes the signal
