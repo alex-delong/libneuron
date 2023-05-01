@@ -113,6 +113,9 @@ void Neuron::metropolis(Network arg_network, float arg_input_signal, float expec
         this->output_edges = old_edges;
     }
 }
+Neuron::~Neuron() {
+    delete[] this->get_edges();
+}
 class Network::Impl {
 public:
     class Layer {
