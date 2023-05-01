@@ -1,8 +1,10 @@
 namespace LibNeuron {
     class Edge;
     class Neuron;
+    class Network;
     // a connection to a neuron
     class Edge {
+        // TODO: put private members into Impl class
         // the neuron recieving the signal 
         Neuron* tip;
         // the coefficient of the signal
@@ -16,6 +18,7 @@ namespace LibNeuron {
         // post-conditions:
             // tip == argument
         Edge(Neuron*, float); 
+        float get_weight();
         // weight setter
         void set_weight(float);
         // tip setter
@@ -26,6 +29,7 @@ namespace LibNeuron {
     };
  
     class Neuron {
+        // TODO: put private members into Impl class
         // the unprocessed sum of the input signals
         float input_signal;
         // an array of output Edges
@@ -50,6 +54,33 @@ namespace LibNeuron {
             // this has transmitted its processed signal to the output edges
             // input_signal == 0
         void fire();
+        // get the unprocessed input signal
+        float read_signal();
+        // output edges getter
+        Edge* get_edges();
+        unsigned int get_size();
+        // use simulated annealing to train the current neuron
+        // pre-conditions:
+            // input and output neurons are valid neuron ptrs 
+            // this is a neuron in a feed-forward network starting with a single input neuron and ending with a single output neuron
+        // post-conditions:
+            // the weights of the output edges have been changed via simulated annealing
+        void metropolis(Network arg_network, float arg_input_signal, float expectation, float temperature);
         ~Neuron();
     };
+    class Network {
+        class Impl;
+        Impl* pimpl;
+    public:
+        Network();
+        Network(const Network&);
+        // initialize an array of sz layers, each with a size given by layer_sz_arr
+        Network(int* layer_sz_arr, int sz);
+        // perform simulated annealing to train the network
+        void anneal(float arg_input_signal, float expectation, float T0, float Tf);
+        float operator()(float);
+        ~Network();
+    };
 }
+
+
