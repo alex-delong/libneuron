@@ -21,7 +21,9 @@ void Edge::set_tip(const Neuron& arg_neuron) {
 void Edge::transmit(float signal) {
     this->tip->signal_add(weight*signal);
 }
-Edge::~Edge() {}
+Edge::~Edge() {
+    delete tip;
+}
 Neuron::Neuron() : 
     input_signal(0.0), 
     output_edges(nullptr), 
@@ -50,7 +52,7 @@ void Neuron::signal_add(float arg_signal) {
 }
 float Neuron::activation() {
     auto sigmoid = [](float x) -> float {
-        return 1/(1 + exp(-x));
+        return x/(1 + exp(-x));
     };
     return sigmoid(this->input_signal);
 }
