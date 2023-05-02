@@ -246,6 +246,9 @@ public:
         this->layer_arr[sz - 1].get_arr()[0].reset_signal();
         return output;
     }
+    ~Impl() {
+        delete[] this->layer_arr;
+    }
 };
 void Network::anneal(float arg_input_signal, float expectation, float T0, float Tf) {
     float T_inc = (Tf - T0)/100.0;
