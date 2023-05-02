@@ -20,7 +20,7 @@ int main() {
 
     int layer_sz_arr[num_layers] = {num_inputs, 5, num_outputs};
     Network test_network(layer_sz_arr, num_layers);
-        // make training data
+    // make training data
     // rule: division by 10
     const char* rule_str = "division by 10";
     cout << "Training parameters: " << endl
@@ -42,6 +42,8 @@ int main() {
         training_input_arr[i] = norm_dist(generator);
         training_output_arr[i] = rule(training_input_arr[i]);
     }
+    // print untrained output
+    cout << "untrained output: 5 / 10 = " << test_network(5.0) << endl;
     // train the network
     const float T0 = 10.0;
     const float Tf = 0.01;
