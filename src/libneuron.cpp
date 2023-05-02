@@ -50,7 +50,7 @@ void Neuron::signal_add(float arg_signal) {
 }
 float Neuron::activation() {
     auto sigmoid = [](float x) -> float {
-        return x/(1 + exp(-x));
+        return 1/(1 + exp(-x));
     };
     return sigmoid(this->input_signal);
 }
