@@ -160,7 +160,7 @@ public:
                 this->neuron_arr[i].fire();
             }
         }
-        float sigsum() {
+        float signal_sum() {
             std::function<float(int)> sum_fn;
             sum_fn = [=](int i) -> float {
                 if (i >= sz) {
