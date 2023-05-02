@@ -181,11 +181,11 @@ public:
         }
         float signal_sum() {
             std::function<float(int)> sum_fn;
-            sum_fn = [=](int i) -> float {
+            sum_fn = [&](int i) -> float {
                 if (i < this->sz) {
                     return this->neuron_arr[i].read_signal() + sum_fn(i + 1);
                 } else {
-                    return 0;
+                    return 0.0;
                 }
             };
             return sum_fn(0);
