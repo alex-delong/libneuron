@@ -151,6 +151,18 @@ public:
                 this->neuron_arr[i].metropolis(arg_network, arg_input_signal, expectation, T);
             }
         }
+        Layer& operator=(const Layer& arg_layer) {
+            if (this == &arg_layer) {
+                return *this;
+            }
+            this->sz = arg_layer.get_size();
+            delete[] this->neuron_arr;
+            this->neuron_arr = new Neuron[this->sz];
+            for (int i = 0; i < this->sz; i++) {
+                this->neuron_arr[i] = arg_layer.get_arr()[i];
+            }
+            return *this;
+        }
         ~Layer() {
             delete[] this->get_arr();
         }
