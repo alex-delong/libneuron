@@ -263,7 +263,7 @@ public:
 };
 void Network::anneal(float arg_input_signal, float expectation, float T0, float Tf) {
     float T_inc = (Tf - T0)/100.0;
-    for (float T = T0; T < Tf; T += T_inc) {
+    for (float T = T0; T > Tf; T -= T_inc) {
         this->pimpl->metropolis(*this, arg_input_signal, expectation, T);
     }
 }
