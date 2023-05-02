@@ -164,8 +164,14 @@ public:
         void signal_add(float input) {
             std::function<void(int)> add_fn;
             add_fn = [&](int i) {
-                
+                if (i >= this->sz) {
+                    this->neuron_arr[i].signal_add(input);
+                } else {
+                    this->neuron_arr[i].signal_add(input);
+                    add_fn(i + 1);
+                }
             };
+            add_fn(0);
         }
         float signal_sum() {
             std::function<float(int)> sum_fn;
@@ -225,7 +231,7 @@ public:
     // for a given argument as input, return the signal recieved by the output neuron
     float operator()(float input) {
         assert(this->layer_arr != nullptr);
-        this->layer_arr[0].get_arr()[0].signal_add(input);
+        this->layer_arr[0].signal_add(input);
         for (int i = 0; i < this->sz - 1; i++) {
             this->layer_arr[i].fire();
         } 
