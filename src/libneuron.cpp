@@ -190,6 +190,17 @@ public:
             };
             return sum_fn(0);
         }
+        // resets the input signals for all neurons in the array
+        void reset_signal() {
+            std::function<void(int)> reset_fn;
+            reset_fn = [&](int i) {
+                if (i < this->sz) {
+                    this->neuron_arr[i].reset_signal();
+                    reset_fn(i + 1);
+                }
+            };
+            reset_fn(0);
+        }
         void metropolis(const Network& arg_network, float arg_input_signal, float expectation, float T) {
             for (int i = 0; i < this->get_size(); i++) {
                 this->neuron_arr[i].metropolis(arg_network, arg_input_signal, expectation, T);
@@ -242,7 +253,7 @@ public:
             this->layer_arr[i].fire();
         } 
         // get output from last neuron unprocessed
-        float output = this->layer_arr[sz - 1].get_arr()[0].read_signal();
+        float output = this->layer_arr[sz - 1].signal_sum();
         this->layer_arr[sz - 1].get_arr()[0].reset_signal();
         return output;
     }
