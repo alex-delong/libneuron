@@ -21,9 +21,7 @@ void Edge::set_tip(const Neuron& arg_neuron) {
 void Edge::transmit(float signal) {
     this->tip->signal_add(weight*signal);
 }
-Edge::~Edge() {
-    delete tip;
-}
+Edge::~Edge() {}
 Neuron::Neuron() : 
     input_signal(0.0), 
     output_edges(nullptr), 
@@ -115,6 +113,18 @@ void Neuron::metropolis(Network arg_network, float arg_input_signal, float expec
     } else {
         this->output_edges = old_edges;
     }
+}
+Neuron& Neuron::operator=(const Neuron& arg_neuron) {
+    if (this == &arg_neuron) {
+        return *this;
+    }
+    this->sz = arg_neuron.sz;
+    delete[] this->output_edges;
+    this->output_edges = new Edge[this->sz];
+    for (int i = 0; i < this->sz; i++) {
+        this->output_edges[i] = arg_neuron.output_edges[i];
+    }
+    return *this;
 }
 Neuron::~Neuron() {
     delete[] this->get_edges();
