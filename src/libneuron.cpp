@@ -160,13 +160,20 @@ public:
                 this->neuron_arr[i].fire();
             }
         }
+        // add the input argument to the input signal of every neuron in this layer
+        void signal_add(float input) {
+            std::function<void(int)> add_fn;
+            add_fn = [&](int i) {
+                
+            };
+        }
         float signal_sum() {
             std::function<float(int)> sum_fn;
             sum_fn = [=](int i) -> float {
-                if (i >= sz) {
-                    return neuron_arr[i].read_signal();
+                if (i >= this->sz) {
+                    return this->neuron_arr[i].read_signal();
                 } else {
-                    return neuron_arr[i].read_signal() + sum_fn(i + 1);
+                    return this->neuron_arr[i].read_signal() + sum_fn(i + 1);
                 }
             };
             return sum_fn(0);
