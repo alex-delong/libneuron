@@ -180,7 +180,7 @@ public:
     float operator()(float input) {
         assert(this->layer_arr != nullptr);
         this->layer_arr[0].get_arr()[0].signal_add(input);
-        for (int i = 0; i < this->sz; i++) {
+        for (int i = 0; i < this->sz - 1; i++) {
             this->layer_arr[i].fire();
         }  
         return this->layer_arr[sz - 1].get_arr()[0].read_signal();
