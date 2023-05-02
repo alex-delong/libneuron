@@ -71,6 +71,9 @@ void Neuron::fire() {
 float Neuron::read_signal() {
     return this->input_signal;
 }
+void Neuron::reset_signal() {
+    this->input_signal = 0;
+}
 Edge* Neuron::get_edges() {
     return this->output_edges;
 }
@@ -206,8 +209,11 @@ public:
         this->layer_arr[0].get_arr()[0].signal_add(input);
         for (int i = 0; i < this->sz - 1; i++) {
             this->layer_arr[i].fire();
-        }  
-        return this->layer_arr[sz - 1].get_arr()[0].read_signal();
+        } 
+        // get output from last neuron unprocessed
+        float output = this->layer_arr[sz - 1].get_arr()[0].read_signal();
+        this->layer_arr[sz - 1].get_arr()[0].reset_signal();
+        return output;
     }
 };
 void Network::anneal(float arg_input_signal, float expectation, float T0, float Tf) {

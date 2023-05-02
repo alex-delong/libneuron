@@ -57,6 +57,7 @@ namespace LibNeuron {
         void fire();
         // get the unprocessed input signal
         float read_signal();
+        void reset_signal();
         // output edges getter
         Edge* get_edges();
         unsigned int get_size();
