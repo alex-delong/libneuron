@@ -26,6 +26,7 @@ namespace LibNeuron {
         void set_tip(const Neuron&);
         // sends the weighted argument signal to the tip Neuron
         void transmit(float);
+        Edge& operator=(const Edge&);
         ~Edge();
     };
  
