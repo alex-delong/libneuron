@@ -2,9 +2,10 @@
 #include <random>
 #include <cmath>
 #include <iostream>
-using std::cout;
-using std::endl;
+
 int main() {
+    using std::cout;
+    using std::endl;
     using namespace LibNeuron;
     // make a feed-forward neural network with input size == output size == 1 and 1 hidden layer of size 5
     const int num_inputs = 1;
@@ -28,7 +29,7 @@ int main() {
     auto rule = [](float x){
         return x/10.0;
     };
-    int training_data_sz = 10;
+    int training_data_sz = 100000;
     cout << "   training data size = " << training_data_sz << endl;
 
     float training_input_arr[training_data_sz];
@@ -72,7 +73,7 @@ int main() {
     for (int i = 0; i < test_data_sz; i++) {
         expectation_arr[i] = test_input_arr[i]/10.0;
         abs_error[i] = fabs(test_output_arr[i] - expectation_arr[i]);
-        pct_error[i] = abs_error[i]/expectation_arr[i] * 100;
+        pct_error[i] = abs_error[i]/fabs(expectation_arr[i]) * 100;
         mean_abs_error += abs_error[i]/test_data_sz;
         mean_pct_error += pct_error[i]/test_data_sz;
     }
