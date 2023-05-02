@@ -252,9 +252,9 @@ public:
         for (int i = 0; i < this->sz - 1; i++) {
             this->layer_arr[i].fire();
         } 
-        // get output from last neuron unprocessed
+        // get output from last layer unprocessed
         float output = this->layer_arr[sz - 1].signal_sum();
-        this->layer_arr[sz - 1].get_arr()[0].reset_signal();
+        this->layer_arr[sz - 1].reset_signal();
         return output;
     }
     ~Impl() {
