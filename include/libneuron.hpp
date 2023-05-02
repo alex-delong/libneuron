@@ -18,10 +18,11 @@ namespace LibNeuron {
         // post-conditions:
             // tip == argument
         Edge(Neuron*, float); 
+        // getters
         float get_weight();
-        // weight setter
+        Neuron* get_tip();
+        // setters
         void set_weight(float);
-        // tip setter
         void set_tip(const Neuron&);
         // sends the weighted argument signal to the tip Neuron
         void transmit(float);

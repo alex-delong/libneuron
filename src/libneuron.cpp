@@ -9,6 +9,9 @@ Edge::Edge(Neuron* tip, float w) : tip(tip), weight(w) {}
 float Edge::get_weight() {
     return this->weight;
 }
+Neuron* Edge::get_tip() {
+    return this->tip;
+}
 void Edge::set_weight(float w) {
     this->weight = w;
 }
