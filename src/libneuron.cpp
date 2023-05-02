@@ -3,6 +3,7 @@
 #include <cmath>
 #include <random>
 #include <assert.h>
+#include <functional>
 using namespace LibNeuron;
 Edge::Edge() : tip(nullptr), weight(1.0) {}
 Edge::Edge(Neuron* tip, float w) : tip(tip), weight(w) {}
@@ -158,6 +159,17 @@ public:
             for (int i = 0; i < this->get_size(); i++) {
                 this->neuron_arr[i].fire();
             }
+        }
+        float sigsum() {
+            std::function<float(int)> sum_fn;
+            sum_fn = [=](int i) -> float {
+                if (i >= sz) {
+                    return neuron_arr[i].read_signal();
+                } else {
+                    return neuron_arr[i].read_signal() + sum_fn(i + 1);
+                }
+            };
+            return sum_fn(0);
         }
         void metropolis(const Network& arg_network, float arg_input_signal, float expectation, float T) {
             for (int i = 0; i < this->get_size(); i++) {
