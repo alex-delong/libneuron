@@ -22,6 +22,14 @@ void Edge::set_tip(const Neuron& arg_neuron) {
 void Edge::transmit(float signal) {
     this->tip->signal_add(weight*signal);
 }
+Edge& Edge::operator=(const Edge& arg_edge) {
+    if (this == &arg_edge) {
+        return *this;
+    } 
+    this->tip = arg_edge.tip;
+    this->weight = arg_edge.weight;
+    return *this;
+}
 Edge::~Edge() {}
 Neuron::Neuron() : 
     input_signal(0.0), 
