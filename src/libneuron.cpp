@@ -164,9 +164,7 @@ public:
         void signal_add(float input) {
             std::function<void(int)> add_fn;
             add_fn = [&](int i) {
-                if (i >= this->sz) {
-                    this->neuron_arr[i].signal_add(input);
-                } else {
+                if (i < this->sz) {
                     this->neuron_arr[i].signal_add(input);
                     add_fn(i + 1);
                 }
@@ -176,9 +174,7 @@ public:
         float signal_sum() {
             std::function<float(int)> sum_fn;
             sum_fn = [=](int i) -> float {
-                if (i >= this->sz) {
-                    return this->neuron_arr[i].read_signal();
-                } else {
+                if (i < this->sz) {
                     return this->neuron_arr[i].read_signal() + sum_fn(i + 1);
                 }
             };
