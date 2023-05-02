@@ -67,6 +67,7 @@ namespace LibNeuron {
         // post-conditions:
             // the weights of the output edges have been changed via simulated annealing
         void metropolis(Network arg_network, float arg_input_signal, float expectation, float temperature);
+        Neuron& operator=(const Neuron&);
         ~Neuron();
     };
     class Network {
