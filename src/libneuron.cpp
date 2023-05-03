@@ -90,7 +90,7 @@ unsigned int Neuron::get_size() {
     return this->sz;
 }
 // simulated annealing of this neuron using a metropolis algorithm
-void Neuron::metropolis(Network arg_network, float arg_input_signal, float expectation, float T) { 
+void Neuron::metropolis(const Network& arg_network, float arg_input_signal, float expectation, float T) { 
     // get error for current weights
     float curr_err = fabs(arg_network(arg_input_signal) - expectation);
     // generate a normal distribution to sample from
@@ -246,7 +246,7 @@ public:
         }
     }
     // for a given argument as input, return the signal recieved by the output neuron
-    float operator()(float input) {
+    float operator()(float input) const {
         assert(this->layer_arr != nullptr);
         this->layer_arr[0].signal_add(input);
         for (int i = 0; i < this->sz - 1; i++) {
@@ -269,7 +269,7 @@ void Network::anneal(float arg_input_signal, float expectation, float T0, float 
 }
 Network::Network() : pimpl(new Impl) {}
 Network::Network(const Network& arg_network) : pimpl(new Impl(arg_network)) {}
-float Network::operator()(float input) {
+float Network::operator()(float input) const {
     return (*this->pimpl)(input); 
 }
 Network::Network(int* layer_sz_arr, int network_sz) : pimpl(new Impl(layer_sz_arr, network_sz)) {}
