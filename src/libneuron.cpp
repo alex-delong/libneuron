@@ -101,10 +101,7 @@ void Neuron::metropolis(const Network& arg_network, float arg_input_signal, floa
         return exp(-delta_e/T);
     }; 
     // store the current edges in case the candidate edges are rejected
-    Edge old_edges[this->sz];
-    for (int i = 0; i < this->sz; i++) {
-        old_edges[i] = this->output_edges[i];
-    }
+    Edge* old_edges = this->output_edges;
     // generate candidate edges whose weights are the current weights + a random increment
     float delta_w = norm_distribution(generator);
     Edge new_edges[this->sz];
