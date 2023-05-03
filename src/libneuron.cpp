@@ -156,12 +156,12 @@ public:
         // connects this layer to the argument layer
         // this is done for each neuron in this layer according to Neuron::set_edges
         void connect(const Layer& arg_layer) {
-            for (int i = 0; i < this->get_size(); i++) {
-                this->neuron_arr[i].set_edges(arg_layer.get_arr(), arg_layer.get_size());
+            for (int i = 0; i < this->sz; i++) {
+                this->neuron_arr[i].set_edges(arg_layer.neuron_arr, arg_layer.sz);
             }
         }
         void fire() {
-            for (int i = 0; i < this->get_size(); i++) {
+            for (int i = 0; i < this->sz; i++) {
                 this->neuron_arr[i].fire();
             }
         }
@@ -207,16 +207,16 @@ public:
             if (this == &arg_layer) {
                 return *this;
             }
-            this->sz = arg_layer.get_size();
+            this->sz = arg_layer.sz;
             delete[] this->neuron_arr;
             this->neuron_arr = new Neuron[this->sz];
             for (int i = 0; i < this->sz; i++) {
-                this->neuron_arr[i] = arg_layer.get_arr()[i];
+                this->neuron_arr[i] = arg_layer.neuron_arr[i];
             }
             return *this;
         }
         ~Layer() {
-            delete[] this->get_arr();
+            delete[] this->neuron_arr;
         }
     };
     Layer* layer_arr;
