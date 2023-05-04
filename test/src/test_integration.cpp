@@ -1,4 +1,5 @@
 #include <libneuron.hpp>
+#include <libnetwork.hpp>
 #include <random>
 #include <cmath>
 #include <iostream>

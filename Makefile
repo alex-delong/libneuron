@@ -39,7 +39,7 @@ test-unit: $(BIN_TEST_UNIT)
 
 test-int: $(BIN_TEST_INTEGRATION)
 
-$(BIN_TEST_UNIT): test/bin/test_unit_% : test/lib/test_unit_%.o lib/lib%.so
+$(BIN_TEST_UNIT): test/bin/test_unit_% : test/lib/test_unit_%.o $(LIBS) #lib/lib%.so
 	mkdir -p test/bin
 	$(CXX) $(CXX_FLAGS) $^ -o $@
 
