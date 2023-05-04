@@ -68,7 +68,7 @@ namespace LibNeuron {
             // this is a neuron in a feed-forward network starting with a single input neuron and ending with a single output neuron
         // post-conditions:
             // the weights of the output edges have been changed via simulated annealing
-        void metropolis(const Network& arg_network, float arg_input_signal, float expectation, float temperature);
+        void metropolis(const Network& arg_network, unsigned arg_input_signal, unsigned expectation, float temperature);
         Neuron& operator=(const Neuron&);
         ~Neuron();
     };
@@ -82,7 +82,7 @@ namespace LibNeuron {
         Network(int* layer_sz_arr, int sz);
         // perform simulated annealing to train the network
         void anneal(float arg_input_signal, float expectation, float T0, float Tf);
-        float operator()(float) const;
+        unsigned int operator()(unsigned int) const;
         ~Network();
     };
 }
