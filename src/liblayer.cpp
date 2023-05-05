@@ -2,6 +2,8 @@
 #include <libneuron.hpp>
 #include <libnetwork.hpp>
 #include <functional>
+#include <random>
+#include <chrono>
 using namespace LibNeuron;
 
 class Layer::Impl {
@@ -64,8 +66,10 @@ public:
         reset_fn(0);
     }
     void metropolis(const Network& arg_network, float arg_input_signal, float expectation, float T) {
+        // call metropolis on a random neuron in this layer
+        std::srand(std::time(nullptr));
         for (int i = 0; i < this->sz; i++) {
-            this->neuron_arr[i].metropolis(arg_network, arg_input_signal, expectation, T);
+            this->neuron_arr[std::rand() % this->sz].metropolis(arg_network, arg_input_signal, expectation, T);
         }
     }
     Impl& operator=(const Impl& arg_impl) {
