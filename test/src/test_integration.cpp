@@ -4,40 +4,47 @@
 #include <cmath>
 #include <iostream>
 #include <chrono>
+
+// network parameters
+const unsigned num_inputs = 32;
+const unsigned num_outputs = 32;
+const unsigned num_hidden = 1;
+const unsigned num_layers = num_hidden + 2;
+// training parameters
+const char* rule_str = "division by 10";
+auto rule = [](unsigned int x) -> unsigned int {
+    return x + 5;
+};
+const unsigned sample_input = 5;
+const unsigned training_data_sz = 10;
+const unsigned p_dist_mean = 1000;
+const char* dist_name = "Poisson";
+// annealing parameters
+const float T0 = 1.0;
+const float Tf = 0.01;
+// test parameters
+const int test_data_sz = 10;
+
 int main() {
     using std::cout;
     using std::endl;
     using namespace LibNeuron;
-    // make a feed-forward neural network with input size == output size == 1 and 1 hidden layer of size 5
-    const int num_inputs = 32;
-    const int num_outputs = 32;
-    const int num_hidden = 1;
-    const int num_layers = num_hidden + 2;
+    // make network
     cout << "Test network parameters: " << endl
          << "   inputs = " << num_inputs << endl
          << "   outputs = " << num_outputs << endl
          << "   layers = " << num_layers << endl;
-
-
     int layer_sz_arr[num_layers] = {num_inputs, 32, num_outputs};
     Network test_network(layer_sz_arr, num_layers);
     // make training data
-    // rule: division by 10
-    const char* rule_str = "division by 10";
     cout << "Training parameters: " << endl
-         << "   rule = " << rule_str << endl;
-
-    auto rule = [](unsigned int x) -> unsigned int {
-        return x + 5;
-    };
-    const int training_data_sz = 1000;
-    cout << "   training data size = " << training_data_sz << endl;
-
-    unsigned int training_input_arr[training_data_sz];
-    unsigned int training_output_arr[training_data_sz];
+         << "   rule = " << rule_str << endl
+         << "   training data size = " << training_data_sz << endl;
+    unsigned training_input_arr[training_data_sz];
+    unsigned training_output_arr[training_data_sz];
     std::default_random_engine generator(std::time(nullptr));
-    std::poisson_distribution<unsigned int> p_dist(1000);
-    cout << "   sample distribution = poisson" << endl;
+    std::poisson_distribution<unsigned> p_dist(p_dist_mean);
+    cout << "   sample distribution = " << dist_name << endl;
     
     for (int i = 0; i < training_data_sz; i++) {
         training_input_arr[i] = p_dist(generator);
@@ -45,20 +52,20 @@ int main() {
         //cout << training_input_arr[i] << endl;
     }
     // print untrained output
-    cout << "untrained output: 5 + 5 = " << test_network(5) << endl;
+    cout << "untrained output for input of "<< sample_input << ": " << test_network(sample_input) << endl;
     // train the network
-    const float T0 = 1.0;
-    const float Tf = 0.01;
     cout << "Annealing parameters: " << endl
          << "   T0 = " << T0 << endl
-         << "   Tf = " << Tf << endl;
-    cout << "Beginning training.. ";
+         << "   Tf = " << Tf << endl
+         << "Beginning training.. " << endl;
+    auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < training_data_sz; i++) {
         test_network.anneal(training_input_arr[i], training_output_arr[i], T0, Tf);
     }
-    cout << "Training complete!" << endl;
+    auto finish = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(finish - start);
+    cout << "Training completed in " << elapsed.count() << " seconds!"<< endl;
     // generate test data
-    const int test_data_sz = 10;
     cout << "test data size = " << test_data_sz << endl;
     unsigned int test_input_arr[test_data_sz];
     unsigned int test_output_arr[test_data_sz];
@@ -84,5 +91,5 @@ int main() {
     // print results
     cout << "Mean absolute error: " << mean_abs_error << endl
          << "Mean percentage error: " << mean_pct_error << endl
-         << "Example output: 5 + 5 = " << test_network(5) << endl;
+         << "Trained output for sample input of " << sample_input << ": " << test_network(sample_input) << endl;
 }
