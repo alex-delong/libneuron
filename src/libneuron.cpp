@@ -9,6 +9,7 @@
 #include <iostream>
 #include <chrono>
 #include <utility>
+#include <thread>
 using namespace LibNeuron;
 class Neuron::Impl {
     Edge* output_edges;
@@ -134,9 +135,12 @@ void Neuron::metropolis(const Network& arg_network, unsigned int arg_input_signa
     }; 
     // store the current edges in case the candidate edges are rejected
     Edge* old_edges = new Edge[this->get_size()];
-    for (int i = 0; i < this->get_size(); i++) {
-        old_edges[i] = this->get_edges()[i];
-    }
+    std::function<void(void)> store = [&]() {
+        for (int i = 0; i < this->get_size(); i++) {
+            old_edges[i] = this->get_edges()[i];
+        }
+    };
+    std::thread thd_store_old(store);
     // generate candidate edges whose weights are the current weights + a random increment 
     Edge* new_edges = new Edge[this->get_size()];
     for (int i = 0; i < this->get_size(); i++) {
@@ -145,6 +149,7 @@ void Neuron::metropolis(const Network& arg_network, unsigned int arg_input_signa
         float curr_wgt = new_edges[i].get_weight();
         new_edges[i].set_weight(curr_wgt + delta_w);
     }
+    thd_store_old.join();
     // find the error for the new edges
     this->set_edges(new_edges, this->get_size());
     unsigned candidate_err = abs(arg_network(arg_input_signal) - expectation);
