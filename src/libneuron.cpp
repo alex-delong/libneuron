@@ -133,12 +133,10 @@ void Neuron::metropolis(const Network& arg_network, unsigned int arg_input_signa
         return exp(-delta_e/T);
     }; 
     // store the current edges in case the candidate edges are rejected
-    Edge* old_edges = this->get_edges();
-    unsigned old_sz = this->get_size();
-    /*Edge* old_edges = new Edge[this->get_size()];
+    Edge* old_edges = new Edge[this->get_size()];
     for (int i = 0; i < this->get_size(); i++) {
         old_edges[i] = this->get_edges()[i];
-    }*/
+    }
     // generate candidate edges whose weights are the current weights + a random increment 
     Edge* new_edges = new Edge[this->get_size()];
     for (int i = 0; i < this->get_size(); i++) {
@@ -148,7 +146,7 @@ void Neuron::metropolis(const Network& arg_network, unsigned int arg_input_signa
         new_edges[i].set_weight(curr_wgt + delta_w);
     }
     // find the error for the new edges
-    
+    this->set_edges(new_edges, this->get_size());
     unsigned candidate_err = abs(arg_network(arg_input_signal) - expectation);
     int delta_e = candidate_err - curr_err;
     // determine if the new edges are accepted using probability P.
@@ -158,8 +156,7 @@ void Neuron::metropolis(const Network& arg_network, unsigned int arg_input_signa
         // accept new_edges
         delete[] old_edges;
     } else {
-        this->set_edges(old_edges, old_sz);
-        delete[] new_edges;
+        this->set_edges(old_edges, this->get_size());
     }
 }
 Neuron& Neuron::operator=(const Neuron& arg_neuron) {
