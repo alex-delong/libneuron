@@ -30,7 +30,7 @@ public:
         std::srand(std::time(nullptr));
         // call metropolis on a random layer excluding the output layer
         for (int i = 0; i < this->sz - 1; i++) {
-            this->layer_arr[std::rand() % this->sz - 1].metropolis(arg_network, arg_input_signal, expectation, T);
+            this->layer_arr[std::rand() % (this->sz - 1)].metropolis(arg_network, arg_input_signal, expectation, T);
         }
     }
     // for a given binary value as input, return the final processed output binary value
