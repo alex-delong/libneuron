@@ -11,10 +11,12 @@ namespace LibNeuron {
         Neuron(Neuron* neuron_arr, unsigned neuron_arr_size);
         unsigned get_size() const;
         Edge* get_edges() const;
+        float* get_weights() const;
         // get the unprocessed input signal
         float get_input_signal() const;
         void set_edges(Neuron*, unsigned);
         void set_edges(Edge*, unsigned);
+        void set_weights(float*);
         // add the argument to the input signal
         void signal_add(float);
         // reset the input signal to 0
@@ -27,7 +29,8 @@ namespace LibNeuron {
         // post-conditions:
             // this has transmitted its processed signal to the output edges
             // input_signal == 0
-        void fire();        
+        void fire();     
+        void r_shift_weights();
         // use simulated annealing to train the current neuron
         // pre-conditions:
             // input and output neurons are valid neuron ptrs 

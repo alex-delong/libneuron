@@ -5,6 +5,7 @@ namespace LibNeuron {
     public:
         Network();
         Network(const Network&);
+        float** get_weights() const;
         // initialize an array of sz layers, each with a size given by layer_sz_arr
         Network(int* layer_sz_arr, int sz);
         // perform simulated annealing to train the network

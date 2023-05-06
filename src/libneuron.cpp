@@ -82,6 +82,13 @@ unsigned Neuron::get_size() const {
 Edge* Neuron::get_edges() const {
     return this->pimpl->get_edges();
 }
+float* Neuron::get_weights() const {
+    float* out = new float[this->get_size()];
+    for (int i = 0; i < this->get_size(); i++) {
+        out[i] = this->get_edges()[i].get_weight();
+    }
+    return out;
+}
 float Neuron::get_input_signal() const {
     return this->pimpl->get_input_signal();
 }
@@ -93,7 +100,13 @@ void Neuron::set_edges(Neuron* arg_neuron_arr, unsigned arg_sz) {
 void Neuron::set_edges(Edge* arg_edge_arr, unsigned arg_sz) {
     this->pimpl->set_edges(arg_edge_arr, arg_sz);
 }
-
+void Neuron::set_weights(float* arg_float_arr) {
+    Edge* edges = this->get_edges();
+    for (int i = 0; i < this->get_size(); i++) {
+        edges[i].set_weight(arg_float_arr[i]); 
+    }
+    delete[] arg_float_arr;
+}
 void Neuron::signal_add(float arg_signal) {
     this->pimpl->signal_add(arg_signal);
 }
@@ -121,7 +134,22 @@ void Neuron::fire() {
 void Neuron::reset_signal() {
     this->pimpl->reset_signal();
 }
-
+// shift the weights by a random increment
+void Neuron::r_shift_weights() {
+    std::default_random_engine generator(std::time(nullptr));
+    std::normal_distribution<float> norm_distribution(0.0, 1.0); // mean, stddev
+    //Edge* new_edges = new Edge[this->get_size()];
+    float* new_wgts = this->get_weights();
+    for (int i = 0; i < this->get_size(); i++) {
+        float delta_w = norm_distribution(generator);
+        new_wgts[i] += delta_w;
+        //new_edges[i] = this->get_edges()[i];
+        //float curr_wgt = new_edges[i].get_weight();
+        //new_edges[i].set_weight(curr_wgt + delta_w);
+    }
+    this->set_weights(new_wgts);
+    //this->set_edges(new_edges, this->get_size());
+}
 // simulated annealing of this neuron using a metropolis algorithm
 void Neuron::metropolis(const Network& arg_network, unsigned int arg_input_signal, unsigned int expectation, float T) { 
     // get error for current weights
@@ -132,7 +160,7 @@ void Neuron::metropolis(const Network& arg_network, unsigned int arg_input_signa
     // probability function for whether to accept or reject candidate edges
     auto P = [](int delta_e, float T) -> float {
         return exp(-delta_e/T);
-    }; 
+    };
     // store the current edges in case the candidate edges are rejected
     Edge* old_edges = new Edge[this->get_size()];
     std::function<void(void)> store = [&]() {
@@ -140,18 +168,9 @@ void Neuron::metropolis(const Network& arg_network, unsigned int arg_input_signa
             old_edges[i] = this->get_edges()[i];
         }
     };
-    std::thread thd_store_old(store);
+    store();
     // generate candidate edges whose weights are the current weights + a random increment 
-    Edge* new_edges = new Edge[this->get_size()];
-    for (int i = 0; i < this->get_size(); i++) {
-        float delta_w = norm_distribution(generator);
-        new_edges[i] = this->get_edges()[i];
-        float curr_wgt = new_edges[i].get_weight();
-        new_edges[i].set_weight(curr_wgt + delta_w);
-    }
-    thd_store_old.join();
-    // find the error for the new edges
-    this->set_edges(new_edges, this->get_size());
+    this->r_shift_weights();
     unsigned candidate_err = abs(arg_network(arg_input_signal) - expectation);
     int delta_e = candidate_err - curr_err;
     // determine if the new edges are accepted using probability P.

@@ -32,6 +32,7 @@ namespace BinFuns {
         for (int i = 0; i < 32; i++) {
             output += pow(2, i)*bin_arr[31 - i];
         }
+        delete[] bin_arr;
         return output;
     }
 }

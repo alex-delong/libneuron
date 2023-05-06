@@ -65,12 +65,13 @@ public:
         };
         reset_fn(0);
     }
+    void metropolis() {
+        std::srand(std::time(nullptr));
+        this->neuron_arr[std::rand() % this->sz].r_shift_weights();
+    }
     void metropolis(const Network& arg_network, float arg_input_signal, float expectation, float T) {
         // call metropolis on a random neuron in this layer
-        std::srand(std::time(nullptr));
-        for (int i = 0; i < this->sz; i++) {
-            this->neuron_arr[std::rand() % this->sz].metropolis(arg_network, arg_input_signal, expectation, T);
-        }
+        //this->neuron_arr[std::rand() % this->sz].metropolis(arg_network, arg_input_signal, expectation, T);
     }
     Impl& operator=(const Impl& arg_impl) {
         if (this == &arg_impl) {
@@ -133,6 +134,9 @@ float Layer::signal_sum() {
 // resets the input signals for all neurons in the array
 void Layer::reset_signal() {
     this->pimpl->reset_signal();
+}
+void Layer::metropolis() {
+    this->pimpl->metropolis();
 }
 void Layer::metropolis(const Network& arg_network, float arg_input, float expectation, float T) {
     this->pimpl->metropolis(arg_network, arg_input, expectation, T);

@@ -18,7 +18,8 @@ namespace LibNeuron {
         // return the sum of the input signals in this layer
         float signal_sum(); 
         // resets the input signals for all neurons in the array
-        void reset_signal(); 
+        void reset_signal();
+        void metropolis();
         void metropolis(const Network&, float, float, float);
         Layer& operator=(const Layer&); 
         // read input signals and convert each to a 1 if positive, else 0

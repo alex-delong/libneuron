@@ -5,6 +5,9 @@
 #include <assert.h>
 #include <random>
 #include <chrono>
+#include <thread>
+#include <cmath>
+#include <functional>
 using namespace LibNeuron;
 class Network::Impl {
 public:
@@ -24,13 +27,68 @@ public:
             layer_arr[i].connect(layer_arr[i + 1]);
         }
     }
+    float*** get_weights() const {
+        float*** out_arr = new float**[this->sz];
+        for (int i = 0; i < this->sz; i++) {
+            out_arr[i] = new float*[this->layer_arr[i].get_size()];
+            for (int j = 0; j < this->layer_arr[i].get_size(); j++) {
+                out_arr[i][j] = this->layer_arr[i].get_arr()[j].get_weights(); 
+            }
+        }
+        return out_arr;
+    }
+    void set_weights(float*** arg_weights) {
+        for (int i = 0; i < this->sz; i++) {
+            for (int j = 0; j < this->sz; j++) {
+                this->layer_arr[i].get_arr()[j].set_weights(arg_weights[i][j]);
+            }
+        }
+        delete[] arg_weights;
+    }
     // TODO: void add_layer(const Layer& arg_layer) {}
     // TODO: void add_layers(int* layer_sz_arr, int num_layers) {}
-    void metropolis(const Network& arg_network, float arg_input_signal, float expectation, float T) {
-        std::srand(std::time(nullptr));
-        // call metropolis on a random layer excluding the output layer
+    void metropolis(const Network& arg_network, unsigned arg_input_signal, unsigned expectation, float T) {
+        // total number of neurons minus the output layer
+        std::function<unsigned(void)> out = [&]() -> unsigned {
+            return BinFuns::to_int((*this)(BinFuns::to_bin(arg_input_signal)));
+        };
+        unsigned curr_err = abs(out() - expectation);
+        unsigned N = 0;
         for (int i = 0; i < this->sz - 1; i++) {
-            this->layer_arr[std::rand() % (this->sz - 1)].metropolis(arg_network, arg_input_signal, expectation, T);
+            N += this->layer_arr[i].get_size();
+        }
+        float*** old_weights = this->get_weights();
+        // for each layer excluding the output, create a new thread and call metropolis 
+        std::thread* thd_arr = new std::thread[N];
+        auto thd_fn = [&](unsigned index) {
+            this->layer_arr[index].metropolis();
+        };
+        std::srand(std::time(nullptr));
+        for (int i = 0; i < N; i++) {
+            unsigned r_index = std::rand() % (this->sz - 1);
+            thd_arr[i] = std::thread(thd_fn, r_index);
+        }
+        for (int i = 0; i < N; i++) {
+            thd_arr[i].join();
+        }
+        delete[] thd_arr;
+        unsigned candidate_err = abs(out() - expectation);
+        unsigned delta_e = candidate_err - curr_err;
+        std::default_random_engine generator(std::time(nullptr));
+        std::uniform_real_distribution<float> uni_dist(0.0, 1.0);
+        auto P = [&]() -> float {
+            return exp(-delta_e/T);
+        };
+        if (P() < uni_dist(generator)) {
+            this->set_weights(old_weights);
+        } else {
+            for (int i = 0; i < this->sz; i++) {
+                for (int j = 0; j < this->layer_arr[i].get_size(); j++) {
+                    delete[] old_weights[i][j];
+                }
+                delete[] old_weights[i];
+            }
+            delete[] old_weights;
         }
     }
     // for a given binary value as input, return the final processed output binary value
@@ -47,6 +105,7 @@ public:
         // get output from last layer
         bool* output = this->layer_arr[sz - 1].to_bin();
         this->layer_arr[sz - 1].reset_signal();
+        delete[] bin_arr_in;
         return output;
     }
     ~Impl() {
@@ -63,11 +122,9 @@ void Network::anneal(float arg_input_signal, float expectation, float T0, float 
 Network::Network() : pimpl(new Impl) {}
 Network::Network(const Network& arg_network) : pimpl(new Impl(arg_network)) {}
 unsigned int Network::operator()(unsigned input) const {
-    bool* bin_arr_in = to_bin(input);
+    bool* bin_arr_in = BinFuns::to_bin(input);
     bool* bin_arr_out = (*this->pimpl)(bin_arr_in); 
-    unsigned unsigned_out = to_int(bin_arr_out);
-    delete[] bin_arr_in;
-    delete[] bin_arr_out;
+    unsigned unsigned_out = BinFuns::to_int(bin_arr_out);
     return unsigned_out;
 }
 Network::Network(int* layer_sz_arr, int network_sz) : pimpl(new Impl(layer_sz_arr, network_sz)) {}
