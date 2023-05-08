@@ -137,7 +137,7 @@ void Neuron::reset_signal() {
 // shift the weights by a random increment
 void Neuron::r_shift_weights() {
     std::default_random_engine generator(std::time(nullptr));
-    std::normal_distribution<float> norm_distribution(0.0, 1.0); // mean, stddev
+    std::normal_distribution<float> norm_distribution(0.0, 0.1); // mean, stddev
     //Edge* new_edges = new Edge[this->get_size()];
     float* new_wgts = this->get_weights();
     for (int i = 0; i < this->get_size(); i++) {

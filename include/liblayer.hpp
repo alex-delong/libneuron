@@ -7,7 +7,8 @@ namespace LibNeuron {
     public:
         Layer();
         Layer(unsigned int);
-        unsigned int get_size();
+        unsigned get_size() const;
+        const Neuron& get_neuron(unsigned) const;
         Neuron* get_arr() const;        
         // connects this layer to the argument layer
         // this is done for each neuron in this layer according to Neuron::set_edges

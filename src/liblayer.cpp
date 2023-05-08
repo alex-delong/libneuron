@@ -16,6 +16,9 @@ public:
     unsigned int get_size() const {
         return this->sz;
     }
+    const Neuron& get_neuron(unsigned i) const {
+        return this->neuron_arr[i];
+    }
     Neuron* get_arr() const {
         return this->neuron_arr;
     }
@@ -109,8 +112,11 @@ public:
 
 Layer::Layer() : pimpl(new Impl) {}
 Layer::Layer(unsigned sz) : pimpl(new Impl(sz)) {}
-unsigned Layer::get_size() {
+unsigned Layer::get_size() const {
     return this->pimpl->get_size();
+}
+const Neuron& Layer::get_neuron(unsigned i) const {
+    return this->pimpl->get_neuron(i);
 }
 Neuron* Layer::get_arr() const {
     return this->pimpl->get_arr();
