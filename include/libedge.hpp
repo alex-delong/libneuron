@@ -1,3 +1,5 @@
+#ifndef LIBEDGE_HPP
+#define LIBEDGE_HPP
 namespace LibNeuron {
     class Neuron;
     class Edge {
@@ -23,3 +25,4 @@ namespace LibNeuron {
         ~Edge();
     };
 }
+#endif

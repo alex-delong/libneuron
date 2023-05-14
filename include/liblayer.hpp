@@ -1,3 +1,7 @@
+#ifndef LIBLAYER_HPP
+#define LIBLAYER_HPP
+#include <random>
+
 namespace LibNeuron {
     class Neuron; 
     class Network;
@@ -20,13 +24,13 @@ namespace LibNeuron {
         float signal_sum(); 
         // resets the input signals for all neurons in the array
         void reset_signal();
-        void metropolis();
-        void metropolis(const Network&, float, float, float);
         Layer& operator=(const Layer&); 
         // read input signals and convert each to a 1 if positive, else 0
         // then return a binary array from the converted values
         bool* to_bin();
+        float* get_output();
         void bin_init(bool*);
         ~Layer();
     };
 }
+#endif

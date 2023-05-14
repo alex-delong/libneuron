@@ -4,6 +4,7 @@
 #include <functional>
 #include <random>
 #include <chrono>
+#include <iostream>
 using namespace LibNeuron;
 
 class Layer::Impl {
@@ -68,14 +69,6 @@ public:
         };
         reset_fn(0);
     }
-    void metropolis() {
-        std::srand(std::time(nullptr));
-        this->neuron_arr[std::rand() % this->sz].r_shift_weights();
-    }
-    void metropolis(const Network& arg_network, float arg_input_signal, float expectation, float T) {
-        // call metropolis on a random neuron in this layer
-        //this->neuron_arr[std::rand() % this->sz].metropolis(arg_network, arg_input_signal, expectation, T);
-    }
     Impl& operator=(const Impl& arg_impl) {
         if (this == &arg_impl) {
             return *this;
@@ -99,10 +92,20 @@ public:
         }
         return bin_arr;
     }
+
+    float* get_output() {
+        float* out_arr = new float[this->sz];
+        for (int i = 0; i < this->sz; i++) {
+            out_arr[i] = this->neuron_arr[i].activation();
+            //out_arr[i] = this->neuron_arr[i].get_input_signal() + this->neuron_arr[i].get_bias();
+        }
+        return out_arr;
+    }
+
     void bin_init(bool* arg_bin_arr) {
         for (int i = 0; i < this->sz; i++) {
             this->neuron_arr[i].reset_signal();
-            this->neuron_arr[i].signal_add(arg_bin_arr[i]);
+            this->neuron_arr[i].signal_add(float(arg_bin_arr[i]));
         }
     }
     ~Impl() {
@@ -141,12 +144,6 @@ float Layer::signal_sum() {
 void Layer::reset_signal() {
     this->pimpl->reset_signal();
 }
-void Layer::metropolis() {
-    this->pimpl->metropolis();
-}
-void Layer::metropolis(const Network& arg_network, float arg_input, float expectation, float T) {
-    this->pimpl->metropolis(arg_network, arg_input, expectation, T);
-}
 Layer& Layer::operator=(const Layer& arg_layer) {
     if (this == &arg_layer) {
         return *this;
@@ -158,6 +155,9 @@ Layer& Layer::operator=(const Layer& arg_layer) {
 // then return a binary array from the converted values
 bool* Layer::to_bin() {
     return this->pimpl->to_bin();
+}
+float* Layer::get_output() {
+    return this->pimpl->get_output();
 }
 void Layer::bin_init(bool* arg_bin_arr) {
     this->pimpl->bin_init(arg_bin_arr);

@@ -1,3 +1,7 @@
+#ifndef LIBNEURON_HPP
+#define LIBNEURON_HPP
+#include <random>
+
 namespace LibNeuron {
     class Edge;
     class Network;
@@ -12,11 +16,13 @@ namespace LibNeuron {
         unsigned get_size() const;
         Edge* get_edges() const;
         float* get_weights() const;
+        float get_bias() const;
         // get the unprocessed input signal
         float get_input_signal() const;
         void set_edges(Neuron*, unsigned);
         void set_edges(Edge*, unsigned);
         void set_weights(float*);
+        void set_bias(float);
         // add the argument to the input signal
         void signal_add(float);
         // reset the input signal to 0
@@ -29,16 +35,11 @@ namespace LibNeuron {
         // post-conditions:
             // this has transmitted its processed signal to the output edges
             // input_signal == 0
-        void fire();     
+        void fire();    
+        void r_shift_weight(unsigned, std::default_random_engine);
         void r_shift_weights();
-        // use simulated annealing to train the current neuron
-        // pre-conditions:
-            // input and output neurons are valid neuron ptrs 
-            // this is a neuron in a feed-forward network starting with a single input neuron and ending with a single output neuron
-        // post-conditions:
-            // the weights of the output edges have been changed via simulated annealing
-        void metropolis(const Network& arg_network, unsigned arg_input_signal, unsigned expectation, float temperature);
         Neuron& operator=(const Neuron&);
         ~Neuron();
     };
 }
+#endif

@@ -13,7 +13,8 @@ OBJS_TEST_UNIT=$(patsubst test/src/test_unit_%.cpp, test/lib/test_unit_%.o, $(SR
 OBJS_TEST_INTEGRATION=test/lib/test_integration.o
 
 CXX=g++
-CXX_FLAGS=-I include 
+CXX_FLAGS=-Wall -I include -L lib -std=c++17 -O3
+DEPENDS=/usr/lib/libSimAnneal/libAnnealMD.so /usr/lib/libmatplot.so
 
 all: test-all libs
 
@@ -47,7 +48,7 @@ $(OBJS_TEST_UNIT) : test/lib/test_unit_%.o : test/src/test_unit_%.cpp include/li
 	mkdir -p test/lib
 	$(CXX) $(CXX_FLAGS) -c $< -o $@ 
 
-$(BIN_TEST_INTEGRATION) : $(OBJS_TEST_INTEGRATION) $(LIBS)
+$(BIN_TEST_INTEGRATION) : $(OBJS_TEST_INTEGRATION) $(LIBS) $(DEPENDS)
 	mkdir -p test/bin
 	$(CXX) $(CXX_FLAGS) $^ -o $@
 

@@ -1,3 +1,7 @@
+#ifndef LIBNETWORK_HPP
+#define LIBNETWORK_HPP
+#include <vector>
+
 namespace LibNeuron {
     class Layer;
     class Network {
@@ -9,13 +13,15 @@ namespace LibNeuron {
         unsigned get_size() const;
         const Layer& get_layer(unsigned) const;
         float*** get_weights() const;
+        float** get_biases() const;
+        void set_weights(float***);
+        void set_weights(std::vector<double>);
+        void set_biases(std::vector<double>);
         // initialize an array of sz layers, each with a size given by layer_sz_arr
         Network(int* layer_sz_arr, int sz);
-        // perform simulated annealing to train the network
-        void anneal(float arg_input_signal, float expectation, float T0, float Tf);
-        void anneal(bool* arg_input_signal, bool expectation, float T0, float Tf);
         unsigned operator()(unsigned) const;
-        bool* operator()(bool*) const;
+        float* operator()(bool*) const;
         ~Network();
     };
 }
+#endif

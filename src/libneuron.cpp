@@ -15,26 +15,40 @@ class Neuron::Impl {
     Edge* output_edges;
     unsigned sz;
     float input_signal;
+    float bias;
 public:
-    Impl() : input_signal(0.0), output_edges(nullptr), sz(0) {}
-    Impl(Neuron* arg_neuron_arr, unsigned int arg_sz) : 
-        input_signal(0.0), 
+    Impl() : output_edges(nullptr), sz(0), input_signal(0.0), bias(0.0) {}
+    Impl(Neuron* arg_neuron_arr, unsigned arg_sz) :  
         output_edges(new Edge[arg_sz]), 
-        sz(arg_sz) 
+        sz(arg_sz),
+        input_signal(0.0),
+        bias(0.0)
     {
         for (int i = 0; i < arg_sz; i++) {
             this->output_edges[i].set_tip(arg_neuron_arr[i]);
         }    
     }
-    Edge* get_edges() {
+    // getters
+    Edge* get_edges() const {
         return this->output_edges;
     }
-    unsigned get_size() {
+    unsigned get_size() const {
         return this->sz;
     }
-    float get_input_signal() {
+    float get_input_signal() const {
         return this->input_signal;
     }
+    float get_bias() const {
+        return this->bias;
+    }
+    float activation() const {
+        auto sigmoid = [&](float x) -> float {
+            return 1/(1 + exp(-x*10));
+        };
+        float result = sigmoid(this->input_signal + this->bias);
+        return result;
+    }
+    // setters
     void set_edges(Neuron* arg_neuron_arr, unsigned arg_sz) {
         this->sz = arg_sz;
         delete[] this->output_edges;
@@ -57,6 +71,9 @@ public:
     void reset_signal() {
         this->input_signal = 0.0;
     }
+    void set_bias(float arg_bias) {
+        this->bias = arg_bias;
+    }
     Impl& operator=(const Impl& arg_impl) {
         if (this == &arg_impl) {
             return *this;
@@ -76,11 +93,14 @@ public:
 };
 Neuron::Neuron() : pimpl(new Impl) {}
 Neuron::Neuron(Neuron* arg_neuron_arr, unsigned int arg_sz) : pimpl(new Impl(arg_neuron_arr, arg_sz)) {}
+Edge* Neuron::get_edges() const {
+    return this->pimpl->get_edges();
+}
 unsigned Neuron::get_size() const {
     return this->pimpl->get_size();
 }
-Edge* Neuron::get_edges() const {
-    return this->pimpl->get_edges();
+float Neuron::get_input_signal() const {
+    return this->pimpl->get_input_signal();
 }
 float* Neuron::get_weights() const {
     float* out = new float[this->get_size()];
@@ -89,8 +109,8 @@ float* Neuron::get_weights() const {
     }
     return out;
 }
-float Neuron::get_input_signal() const {
-    return this->pimpl->get_input_signal();
+float Neuron::get_bias() const {
+    return this->pimpl->get_bias();
 }
 // TODO: void Neuron::set_edges(const Layer&) {} // sets all the edges of this neuron to connect to all the neurons in the argument layer
 
@@ -100,6 +120,10 @@ void Neuron::set_edges(Neuron* arg_neuron_arr, unsigned arg_sz) {
 void Neuron::set_edges(Edge* arg_edge_arr, unsigned arg_sz) {
     this->pimpl->set_edges(arg_edge_arr, arg_sz);
 }
+void Neuron::signal_add(float arg_signal) {
+    this->pimpl->signal_add(arg_signal);
+}
+
 void Neuron::set_weights(float* arg_float_arr) {
     Edge* edges = this->get_edges();
     for (int i = 0; i < this->get_size(); i++) {
@@ -107,14 +131,13 @@ void Neuron::set_weights(float* arg_float_arr) {
     }
     delete[] arg_float_arr;
 }
-void Neuron::signal_add(float arg_signal) {
-    this->pimpl->signal_add(arg_signal);
+
+void Neuron::set_bias(float arg_bias) {
+    return this->pimpl->set_bias(arg_bias);
 }
+
 float Neuron::activation() {
-    auto sigmoid = [](float x) -> float {
-        return 1/(1 + exp(-x));
-    };
-    return sigmoid(this->get_input_signal());
+    return this->pimpl->activation();
 }
 // for every edge in the array of output edges, transmit the processed signal
 // then reset the input signal
@@ -128,21 +151,36 @@ void Neuron::fire() {
     for (int i = 0; i < this->pimpl->get_size(); i++) {
         this->pimpl->get_edges()[i].transmit(this->activation());
     }
+    //std::cout << this->activation() << std::endl;
     this->reset_signal();
 }
 
 void Neuron::reset_signal() {
     this->pimpl->reset_signal();
 }
+
+void Neuron::r_shift_weight(unsigned i, std::default_random_engine generator) {
+    std::uniform_real_distribution<float> uni_dist(-1.0, 1.0);
+    float curr_wgt = this->pimpl->get_edges()[i].get_weight();
+    float delta_w = uni_dist(generator)*0.5;
+    this->pimpl->get_edges()[i].set_weight(curr_wgt + delta_w);
+}
+
 // shift the weights by a random increment
 void Neuron::r_shift_weights() {
     std::default_random_engine generator(std::time(nullptr));
-    std::normal_distribution<float> norm_distribution(0.0, 0.1); // mean, stddev
+    std::uniform_int_distribution<int> uni_int_dist(-1, 1);
+    //std::uniform_real_distribution<float> uni_dist(-0.0001, 0.0001);  
     //Edge* new_edges = new Edge[this->get_size()];
     float* new_wgts = this->get_weights();
     for (int i = 0; i < this->get_size(); i++) {
-        float delta_w = norm_distribution(generator);
+        float delta_w = uni_int_dist(generator)*0.5;
         new_wgts[i] += delta_w;
+        if (new_wgts[i] > 2.0) {
+            new_wgts[i] = 2.0;
+        } else if (new_wgts[i] < -2.0) {
+            new_wgts[i] = -2.0;
+        }
         //new_edges[i] = this->get_edges()[i];
         //float curr_wgt = new_edges[i].get_weight();
         //new_edges[i].set_weight(curr_wgt + delta_w);
@@ -150,39 +188,7 @@ void Neuron::r_shift_weights() {
     this->set_weights(new_wgts);
     //this->set_edges(new_edges, this->get_size());
 }
-// simulated annealing of this neuron using a metropolis algorithm
-void Neuron::metropolis(const Network& arg_network, unsigned int arg_input_signal, unsigned int expectation, float T) { 
-    // get error for current weights
-    unsigned curr_err = abs(arg_network(arg_input_signal) - expectation);
-    // generate a normal distribution to sample from
-    std::default_random_engine generator(std::time(nullptr));
-    std::normal_distribution<float> norm_distribution(0.0, 1.0); // mean, stddev
-    // probability function for whether to accept or reject candidate edges
-    auto P = [](int delta_e, float T) -> float {
-        return exp(-delta_e/T);
-    };
-    // store the current edges in case the candidate edges are rejected
-    Edge* old_edges = new Edge[this->get_size()];
-    std::function<void(void)> store = [&]() {
-        for (int i = 0; i < this->get_size(); i++) {
-            old_edges[i] = this->get_edges()[i];
-        }
-    };
-    store();
-    // generate candidate edges whose weights are the current weights + a random increment 
-    this->r_shift_weights();
-    unsigned candidate_err = abs(arg_network(arg_input_signal) - expectation);
-    int delta_e = candidate_err - curr_err;
-    // determine if the new edges are accepted using probability P.
-    std::uniform_real_distribution<float> uniform_distribution(0.0, 1.0);
-    float threshold = uniform_distribution(generator);
-    if (P(delta_e, T) > threshold) {
-        // accept new_edges
-        delete[] old_edges;
-    } else {
-        this->set_edges(old_edges, this->get_size());
-    }
-}
+
 Neuron& Neuron::operator=(const Neuron& arg_neuron) {
     if (this == &arg_neuron) {
         return *this;
