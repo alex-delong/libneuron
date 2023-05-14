@@ -102,7 +102,9 @@ int main() {
         test_network.set_biases(bias);
         double diff_sum = 0.0;
         for (int i = 0; i < bits_arr_sz; i++) {
-            diff_sum += fabs(double(test_network(bits_arr[i])[0]) - double(rule(bits_arr[i])));
+            float* network_out = test_network(bits_arr[i]);
+            diff_sum += fabs(double(network_out[0]) - double(rule(bits_arr[i])));
+            delete[] network_out;
         }
         return diff_sum;
     };
@@ -113,6 +115,13 @@ int main() {
     }
     //m_dim_anneal.show_plot();
     std::cout << energy_fn(result) << std::endl;
-    for (int i = 0; i < bits_arr_sz; i++)
-        std::cout << test_network(bits_arr[i])[0] << " " << rule(bits_arr[i]) << std::endl;
+    for (int i = 0; i < bits_arr_sz; i++) {
+        float* network_out = test_network(bits_arr[i]);
+        std::cout << network_out[0] << " " << rule(bits_arr[i]) << std::endl;
+        delete[] network_out;
+    }
+    for (int i = 0; i < bits_arr_sz; i++) {
+        delete[] bits_arr[i];
+    }
+    delete[] bits_arr;
 }
