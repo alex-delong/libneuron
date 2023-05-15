@@ -11,6 +11,7 @@
 #include <utility>
 #include <thread>
 #include <mutex>
+#include <stdexcept>
 using namespace LibNeuron;
 class Neuron::Impl {
     Edge* output_edges;
@@ -40,6 +41,9 @@ public:
         return this->input_signal;
     }
     double* get_weights() const {
+        if (this->output_edges == nullptr) {
+            throw std::logic_error("Attempted to get weights from uninitialized edges");
+        }
         double* out = new double[this->sz];
         for (int i = 0; i < this->sz; i++) {
             out[i] = this->output_edges[i].get_weight();
