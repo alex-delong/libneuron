@@ -26,7 +26,7 @@ public:
         input_signal(0.0),
         bias(0.0)
     {
-        for (int i = 0; i < arg_sz; i++) {
+        for (unsigned i = 0; i < arg_sz; i++) {
             this->output_edges[i].set_tip(arg_neuron_arr[i]);
         }    
     }
@@ -45,7 +45,7 @@ public:
             throw std::logic_error("Attempted to get weights from uninitialized edges");
         }
         double* out = new double[this->sz];
-        for (int i = 0; i < this->sz; i++) {
+        for (unsigned i = 0; i < this->sz; i++) {
             out[i] = this->output_edges[i].get_weight();
         }
         return out;
@@ -65,7 +65,7 @@ public:
         this->sz = arg_sz;
         delete[] this->output_edges;
         this->output_edges = new Edge[arg_sz];
-        for (int i = 0; i < arg_sz; i++) {
+        for (unsigned i = 0; i < arg_sz; i++) {
             this->output_edges[i].set_tip(arg_neuron_arr[i]); 
         }
     }
@@ -82,14 +82,14 @@ public:
     }
     void set_weights(double* arg_wgts) {
         Edge* edges = this->output_edges;
-        for (int i = 0; i < this->get_size(); i++) {
+        for (unsigned i = 0; i < this->get_size(); i++) {
             edges[i].set_weight(arg_wgts[i]); 
         }
         delete[] arg_wgts;
     }
     void fire() {
         assert(this->output_edges != nullptr);
-        for (int i = 0; i < this->sz; i++) {
+        for (unsigned i = 0; i < this->sz; i++) {
             this->output_edges[i].transmit(this->activation());
         }
         this->input_signal = 0.0;
@@ -107,7 +107,7 @@ public:
         delete[] this->output_edges;
         this->sz = arg_impl.sz;
         this->output_edges = new Edge[this->sz];
-        for (int i = 0; i < this->sz; i++) {
+        for (unsigned i = 0; i < this->sz; i++) {
             this->output_edges[i] = arg_impl.output_edges[i];
         }
         this->input_signal = arg_impl.input_signal;
