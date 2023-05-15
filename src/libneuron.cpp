@@ -125,14 +125,14 @@ Edge* Neuron::get_edges() const {
 unsigned Neuron::get_size() const {
     return this->pimpl->get_size();
 }
-double Neuron::get_input_signal() const {
-    return this->pimpl->get_input_signal();
-}
 double* Neuron::get_weights() const {
     return this->pimpl->get_weights();
 }
 double Neuron::get_bias() const {
     return this->pimpl->get_bias();
+}
+double Neuron::get_input_signal() const {
+    return this->pimpl->get_input_signal();
 }
 // TODO: void Neuron::set_edges(const Layer&) {} // sets all the edges of this neuron to connect to all the neurons in the argument layer
 
