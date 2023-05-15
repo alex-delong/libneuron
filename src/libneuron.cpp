@@ -10,12 +10,13 @@
 #include <chrono>
 #include <utility>
 #include <thread>
+#include <mutex>
 using namespace LibNeuron;
 class Neuron::Impl {
     Edge* output_edges;
     unsigned sz;
-    float input_signal;
-    float bias;
+    double input_signal;
+    double bias;
 public:
     Impl() : output_edges(nullptr), sz(0), input_signal(0.0), bias(0.0) {}
     Impl(Neuron* arg_neuron_arr, unsigned arg_sz) :  
@@ -35,17 +36,24 @@ public:
     unsigned get_size() const {
         return this->sz;
     }
-    float get_input_signal() const {
+    double get_input_signal() const {
         return this->input_signal;
     }
-    float get_bias() const {
+    double* get_weights() const {
+        double* out = new double[this->sz];
+        for (int i = 0; i < this->sz; i++) {
+            out[i] = this->output_edges[i].get_weight();
+        }
+        return out;
+    }
+    double get_bias() const {
         return this->bias;
     }
-    float activation() const {
-        auto sigmoid = [&](float x) -> float {
+    double activation() const {
+        auto sigmoid = [&](double x) -> double {
             return 1/(1 + exp(-x*10));
         };
-        float result = sigmoid(this->input_signal + this->bias);
+        double result = sigmoid(this->input_signal + this->bias);
         return result;
     }
     // setters
@@ -65,13 +73,27 @@ public:
     void set_size(unsigned i) {
         this->sz = i;
     }
-    void signal_add(float arg_signal) {
+    void signal_add(double arg_signal) {
         this->input_signal += arg_signal;
+    }
+    void set_weights(double* arg_wgts) {
+        Edge* edges = this->output_edges;
+        for (int i = 0; i < this->get_size(); i++) {
+            edges[i].set_weight(arg_wgts[i]); 
+        }
+        delete[] arg_wgts;
+    }
+    void fire() {
+        assert(this->output_edges != nullptr);
+        for (int i = 0; i < this->sz; i++) {
+            this->output_edges[i].transmit(this->activation());
+        }
+        this->input_signal = 0.0;
     }
     void reset_signal() {
         this->input_signal = 0.0;
     }
-    void set_bias(float arg_bias) {
+    void set_bias(double arg_bias) {
         this->bias = arg_bias;
     }
     Impl& operator=(const Impl& arg_impl) {
@@ -99,17 +121,13 @@ Edge* Neuron::get_edges() const {
 unsigned Neuron::get_size() const {
     return this->pimpl->get_size();
 }
-float Neuron::get_input_signal() const {
+double Neuron::get_input_signal() const {
     return this->pimpl->get_input_signal();
 }
-float* Neuron::get_weights() const {
-    float* out = new float[this->get_size()];
-    for (int i = 0; i < this->get_size(); i++) {
-        out[i] = this->get_edges()[i].get_weight();
-    }
-    return out;
+double* Neuron::get_weights() const {
+    return this->pimpl->get_weights();
 }
-float Neuron::get_bias() const {
+double Neuron::get_bias() const {
     return this->pimpl->get_bias();
 }
 // TODO: void Neuron::set_edges(const Layer&) {} // sets all the edges of this neuron to connect to all the neurons in the argument layer
@@ -120,23 +138,16 @@ void Neuron::set_edges(Neuron* arg_neuron_arr, unsigned arg_sz) {
 void Neuron::set_edges(Edge* arg_edge_arr, unsigned arg_sz) {
     this->pimpl->set_edges(arg_edge_arr, arg_sz);
 }
-void Neuron::signal_add(float arg_signal) {
+void Neuron::signal_add(double arg_signal) {
     this->pimpl->signal_add(arg_signal);
 }
-
-void Neuron::set_weights(float* arg_float_arr) {
-    Edge* edges = this->get_edges();
-    for (int i = 0; i < this->get_size(); i++) {
-        edges[i].set_weight(arg_float_arr[i]); 
-    }
-    delete[] arg_float_arr;
+void Neuron::set_weights(double* arg_wgts) {
+    this->pimpl->set_weights(arg_wgts);
 }
-
-void Neuron::set_bias(float arg_bias) {
+void Neuron::set_bias(double arg_bias) {
     return this->pimpl->set_bias(arg_bias);
 }
-
-float Neuron::activation() {
+double Neuron::activation() {
     return this->pimpl->activation();
 }
 // for every edge in the array of output edges, transmit the processed signal
@@ -147,48 +158,11 @@ float Neuron::activation() {
     // the input signal has been processed and transmitted to all of the forward neurons
     // this->input_signal == 0;
 void Neuron::fire() {
-    assert(this->pimpl->get_edges() != nullptr);
-    for (int i = 0; i < this->pimpl->get_size(); i++) {
-        this->pimpl->get_edges()[i].transmit(this->activation());
-    }
-    //std::cout << this->activation() << std::endl;
-    this->reset_signal();
+    this->pimpl->fire();
 }
-
 void Neuron::reset_signal() {
     this->pimpl->reset_signal();
 }
-
-void Neuron::r_shift_weight(unsigned i, std::default_random_engine generator) {
-    std::uniform_real_distribution<float> uni_dist(-1.0, 1.0);
-    float curr_wgt = this->pimpl->get_edges()[i].get_weight();
-    float delta_w = uni_dist(generator)*0.5;
-    this->pimpl->get_edges()[i].set_weight(curr_wgt + delta_w);
-}
-
-// shift the weights by a random increment
-void Neuron::r_shift_weights() {
-    std::default_random_engine generator(std::time(nullptr));
-    std::uniform_int_distribution<int> uni_int_dist(-1, 1);
-    //std::uniform_real_distribution<float> uni_dist(-0.0001, 0.0001);  
-    //Edge* new_edges = new Edge[this->get_size()];
-    float* new_wgts = this->get_weights();
-    for (int i = 0; i < this->get_size(); i++) {
-        float delta_w = uni_int_dist(generator)*0.5;
-        new_wgts[i] += delta_w;
-        if (new_wgts[i] > 2.0) {
-            new_wgts[i] = 2.0;
-        } else if (new_wgts[i] < -2.0) {
-            new_wgts[i] = -2.0;
-        }
-        //new_edges[i] = this->get_edges()[i];
-        //float curr_wgt = new_edges[i].get_weight();
-        //new_edges[i].set_weight(curr_wgt + delta_w);
-    }
-    this->set_weights(new_wgts);
-    //this->set_edges(new_edges, this->get_size());
-}
-
 Neuron& Neuron::operator=(const Neuron& arg_neuron) {
     if (this == &arg_neuron) {
         return *this;
