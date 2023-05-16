@@ -83,6 +83,8 @@ public:
     void set_weights(double* arg_wgts) {
         if (this->output_edges == nullptr) {
             throw std::logic_error("Attempted to set weights for uninitialized edges");
+        } else if (arg_wgts == nullptr) {
+            throw std::invalid_argument("Attempted to set weights from nullptr argument");
         }
         Edge* edges = this->output_edges;
         for (unsigned i = 0; i < this->get_size(); i++) {
