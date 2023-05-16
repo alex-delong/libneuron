@@ -41,6 +41,7 @@ BOOST_AUTO_TEST_CASE(setters) {
     LibNeuron::Edge* edges_default = neuron_default.get_edges();
     BOOST_CHECK_NE(edges_default, nullptr);
     BOOST_CHECK_EQUAL(neuron_default.get_size(), 8);
+    
     LibNeuron::Edge* edges_default_other = new LibNeuron::Edge[neuron_default.get_size()];
     std::copy(
         neuron_default.get_edges(),
@@ -51,7 +52,18 @@ BOOST_AUTO_TEST_CASE(setters) {
     neuron_default_other.set_edges(edges_default_other, neuron_default.get_size()); 
     BOOST_CHECK_NE(neuron_default_other.get_edges(), nullptr);
     BOOST_CHECK_EQUAL(neuron_default_other.get_size(), neuron_default.get_size());
-    
+   
+    double rand_sig;
+    double total_sig = 0;
+    for (unsigned i = 0; i < 10000; i++) {
+        rand_sig = norm_dist(generator);
+        total_sig += rand_sig;
+        neuron_default.signal_add(rand_sig);
+        BOOST_CHECK_EQUAL(neuron_default.get_input_signal(), total_sig);
+    }
+
+    //TODO: set_weights()
+
     double rand_bias;
     for (unsigned i = 0; i < 10000; i++) {
         rand_bias = norm_dist(generator);
