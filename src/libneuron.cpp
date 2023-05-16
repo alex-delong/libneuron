@@ -81,6 +81,9 @@ public:
         this->input_signal += arg_signal;
     }
     void set_weights(double* arg_wgts) {
+        if (this->output_edges == nullptr) {
+            throw std::logic_error("Attempted to set weights for uninitialized edges");
+        }
         Edge* edges = this->output_edges;
         for (unsigned i = 0; i < this->get_size(); i++) {
             edges[i].set_weight(arg_wgts[i]); 
