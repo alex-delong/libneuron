@@ -7,7 +7,9 @@
 #include <liblayer.hpp>
 #include <libedge.hpp>
 #include <boost/test/unit_test.hpp>
+#include <boost/test/unit_test_parameters.hpp>
 #include <stdexcept>
+#include <random>
 
 BOOST_AUTO_TEST_SUITE(NeuronTestSuite)
 BOOST_AUTO_TEST_CASE(constructors_test) {
@@ -16,8 +18,8 @@ BOOST_AUTO_TEST_CASE(constructors_test) {
     BOOST_CHECK_EQUAL(neuron_default.get_size(), 0);
     BOOST_CHECK_THROW(neuron_default.get_weights(), std::logic_error);
     BOOST_CHECK_EQUAL(neuron_default.get_bias(), 0);
-    BOOST_CHECK_EQUAL(neuron_default.get_input_signal(), 0);
-    
+    BOOST_CHECK_EQUAL(neuron_default.get_input_signal(), 0); 
+
     LibNeuron::Neuron neuron_arr[5];
     LibNeuron::Neuron neuron_arr_constr(neuron_arr, 5);
     BOOST_CHECK_NE(neuron_arr_constr.get_edges(), nullptr);
@@ -27,6 +29,35 @@ BOOST_AUTO_TEST_CASE(constructors_test) {
     delete[] wgts_arr_constr;
     BOOST_CHECK_EQUAL(neuron_arr_constr.get_bias(), 0);
     BOOST_CHECK_EQUAL(neuron_arr_constr.get_input_signal(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(setters) {
+    std::default_random_engine generator;
+    std::normal_distribution<double> norm_dist;
+
+    LibNeuron::Neuron neuron_default;
+    LibNeuron::Neuron neuron_arr[8];
+    neuron_default.set_edges(neuron_arr, 8);
+    LibNeuron::Edge* edges_default = neuron_default.get_edges();
+    BOOST_CHECK_NE(edges_default, nullptr);
+    BOOST_CHECK_EQUAL(neuron_default.get_size(), 8);
+    LibNeuron::Edge* edges_default_other = new LibNeuron::Edge[neuron_default.get_size()];
+    std::copy(
+        neuron_default.get_edges(),
+        neuron_default.get_edges() + neuron_default.get_size(),
+        edges_default_other
+    );
+    LibNeuron::Neuron neuron_default_other;
+    neuron_default_other.set_edges(edges_default_other, neuron_default.get_size()); 
+    BOOST_CHECK_NE(neuron_default_other.get_edges(), nullptr);
+    BOOST_CHECK_EQUAL(neuron_default_other.get_size(), neuron_default.get_size());
+    
+    double rand_bias;
+    for (unsigned i = 0; i < 10000; i++) {
+        rand_bias = norm_dist(generator);
+        neuron_default.set_bias(rand_bias);
+        BOOST_CHECK_EQUAL(neuron_default.get_bias(), rand_bias);
+    } 
 }
 BOOST_AUTO_TEST_SUITE_END()
 
