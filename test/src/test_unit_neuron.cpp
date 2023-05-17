@@ -12,6 +12,7 @@
 #include <random>
 
 BOOST_AUTO_TEST_SUITE(NeuronTestSuite)
+
 BOOST_AUTO_TEST_CASE(constructors_test) {
     LibNeuron::Neuron neuron_default;
     BOOST_CHECK_EQUAL(neuron_default.get_edges(), nullptr);
@@ -79,6 +80,22 @@ BOOST_AUTO_TEST_CASE(setters) {
         BOOST_CHECK_EQUAL(neuron_default.get_bias(), rand_bias);
     } 
 }
+
+BOOST_AUTO_TEST_CASE(fire) {
+    LibNeuron::Neuron default_neuron;
+    LibNeuron::Neuron neuron_arr[5];
+    double* wgts_arr = new double[5]{1.0, 1.0, 1.0, 1.0, 1.0};
+    default_neuron.set_edges(neuron_arr, 5);
+    default_neuron.set_weights(wgts_arr);
+    default_neuron.signal_add(5.0);
+    default_neuron.fire();
+    BOOST_CHECK_EQUAL(default_neuron.get_input_signal(), 0);
+    for (unsigned i = 0; i < 5; i++) {
+        BOOST_CHECK_NE(neuron_arr[i].get_input_signal(), 0);
+    }
+    
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 int main(int argc, char** argv) {
