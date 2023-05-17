@@ -62,7 +62,12 @@ BOOST_AUTO_TEST_CASE(setters) {
         BOOST_CHECK_EQUAL(neuron_default.get_input_signal(), total_sig);
     }
 
-    //TODO: set_weights()
+    BOOST_CHECK_THROW(neuron_default.set_weights(nullptr), std::invalid_argument);
+    double* wgts_arr = new double[neuron_default.get_size()];
+    for (unsigned i = 0; i < neuron_default.get_size(); i++) {
+        wgts_arr[i] = norm_dist(generator);
+    }
+    neuron_default.set_weights(wgts_arr);
 
     double rand_bias;
     for (unsigned i = 0; i < 10000; i++) {
