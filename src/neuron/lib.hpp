@@ -14,6 +14,7 @@
 
 using namespace LibNeuron;
 class NeuronImpl {
+protected:
     Edge* output_edges;
     unsigned sz;
     double input_signal;
