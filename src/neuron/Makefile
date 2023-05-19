@@ -11,8 +11,11 @@ build: $(LIB_DIR)/$(LIB)
 
 test: bin/test
 
-$(LIB_DIR)/$(LIB): src/lib.cpp src/lib.hpp
-	$(CXX) $(CXX_FLAGS) -c src/lib.cpp -o $(LIB_DIR)/$(LIB)
+$(LIB_DIR)/$(LIB): lib/$(LIB)
+	cp lib/$(LIB) $(LIB_DIR)/$(LIB)
+
+lib/$(LIB): src/lib.cpp src/lib.hpp
+	$(CXX) $(CXX_FLAGS) -c src/lib.cpp -o lib/$(LIB)
 
 bin/test: lib/test.o
 	mkdir -p bin
