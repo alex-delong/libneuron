@@ -8,6 +8,6 @@ CXX_FLAGS=-Wall -std=c++17 -O3 -I $(INCLUDE_DIR) -L $(LIB_DIR)
 
 build: $(LIB_DIR)/$(LIB).so
 
-$(LIB_DIR)/$(LIB).so: $(LIB).cpp NeuronImpl.hpp
-	$(CXX) $(CXX_FLAGS) -c $(LIB).cpp -o $(LIB_DIR)/$(LIB).so
+$(LIB_DIR)/$(LIB).so: lib.cpp lib.hpp
+	$(CXX) $(CXX_FLAGS) -c lib.cpp -o $(LIB_DIR)/$(LIB).so
 	

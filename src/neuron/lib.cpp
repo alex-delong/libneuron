@@ -1,5 +1,5 @@
 #include <libneuron.hpp>
-#include "NeuronImpl.hpp"
+#include "lib.hpp"
 #include <libedge.hpp>
 #include <libnetwork.hpp>
 
