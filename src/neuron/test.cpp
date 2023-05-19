@@ -13,6 +13,8 @@
 #include "lib.hpp"
 
 struct TestImpl : public NeuronImpl {
+    TestImpl() : NeuronImpl() {}
+    TestImpl(Neuron* arg_neuron_arr, unsigned arg_sz) : NeuronImpl(arg_neuron_arr, arg_sz) {}
     void test_get_edges() {
         if (this->output_edges != this->get_edges()) {
             throw std::logic_error("get_edges() did not return the correct value");
