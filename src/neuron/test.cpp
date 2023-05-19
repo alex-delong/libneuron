@@ -15,7 +15,12 @@
 class TestImpl : public NeuronImpl {
     void test_get_edges() {
         if (this->output_edges != this->get_edges()) {
-            throw std::logic_error("get_edges() did not return the correct edges");
+            throw std::logic_error("get_edges() did not return the correct value");
+        }
+    }
+    void test_get_size() {
+        if (this->sz != this->get_size()) {
+            throw std::logic_error("get_size() did not return the correct value");
         }
     }
 };
