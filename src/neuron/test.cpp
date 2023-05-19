@@ -12,7 +12,7 @@
 #include <random>
 #include "lib.hpp"
 
-class TestImpl : public NeuronImpl {
+struct TestImpl : public NeuronImpl {
     void test_get_edges() {
         if (this->output_edges != this->get_edges()) {
             throw std::logic_error("get_edges() did not return the correct value");
@@ -21,6 +21,14 @@ class TestImpl : public NeuronImpl {
     void test_get_size() {
         if (this->sz != this->get_size()) {
             throw std::logic_error("get_size() did not return the correct value");
+        }
+    }
+    void test_get_weights() {
+        double* test_out = this->get_weights();
+        for (unsigned i = 0; i < this->sz; i++) {
+            if (test_out[i] != this->output_edges[i].get_weight()) {
+                throw std::logic_error("get_weights() did not return the correct value");
+            }
         }
     }
 };
