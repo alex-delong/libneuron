@@ -36,7 +36,7 @@ public:
         }
     }
     // add the input argument to the input signal of every neuron in this layer
-    void signal_add(float input) {
+    void signal_add(double input) {
         std::function<void(int)> add_fn;
         add_fn = [&](int i) {
             if (i < this->sz) {
@@ -47,9 +47,9 @@ public:
         add_fn(0);
     }
     // return the sum of the input signals in this layer
-    float signal_sum() {
-        std::function<float(int)> sum_fn;
-        sum_fn = [&](int i) -> float {
+    double signal_sum() {
+        std::function<double(int)> sum_fn;
+        sum_fn = [&](int i) -> double {
             if (i < this->sz) {
                 return this->neuron_arr[i].get_input_signal() + sum_fn(i + 1);
             } else {
@@ -93,8 +93,8 @@ public:
         return bin_arr;
     }
 
-    float* get_output() {
-        float* out_arr = new float[this->sz];
+    double* get_output() {
+        double* out_arr = new double[this->sz];
         for (int i = 0; i < this->sz; i++) {
             out_arr[i] = this->neuron_arr[i].activation();
             //out_arr[i] = this->neuron_arr[i].get_input_signal() + this->neuron_arr[i].get_bias();
@@ -105,7 +105,7 @@ public:
     void bin_init(bool* arg_bin_arr) {
         for (int i = 0; i < this->sz; i++) {
             this->neuron_arr[i].reset_signal();
-            this->neuron_arr[i].signal_add(float(arg_bin_arr[i]));
+            this->neuron_arr[i].signal_add(double(arg_bin_arr[i]));
         }
     }
     ~Impl() {
@@ -133,11 +133,11 @@ void Layer::fire() {
     this->pimpl->fire();
 } 
 // add the input argument to the input signal of every neuron in this layer
-void Layer::signal_add(float arg_signal) {
+void Layer::signal_add(double arg_signal) {
     this->pimpl->signal_add(arg_signal);
 } 
 // return the sum of the input signals in this layer
-float Layer::signal_sum() {
+double Layer::signal_sum() {
     return this->pimpl->signal_sum();
 } 
 // resets the input signals for all neurons in the array
@@ -156,7 +156,7 @@ Layer& Layer::operator=(const Layer& arg_layer) {
 bool* Layer::to_bin() {
     return this->pimpl->to_bin();
 }
-float* Layer::get_output() {
+double* Layer::get_output() {
     return this->pimpl->get_output();
 }
 void Layer::bin_init(bool* arg_bin_arr) {

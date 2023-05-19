@@ -19,16 +19,16 @@ namespace LibNeuron {
         void connect(const Layer&);        
         void fire(); 
         // add the input argument to the input signal of every neuron in this layer
-        void signal_add(float); 
+        void signal_add(double); 
         // return the sum of the input signals in this layer
-        float signal_sum(); 
+        double signal_sum(); 
         // resets the input signals for all neurons in the array
         void reset_signal();
         Layer& operator=(const Layer&); 
         // read input signals and convert each to a 1 if positive, else 0
         // then return a binary array from the converted values
         bool* to_bin();
-        float* get_output();
+        double* get_output();
         void bin_init(bool*);
         ~Layer();
     };

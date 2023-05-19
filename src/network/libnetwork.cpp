@@ -36,27 +36,27 @@ public:
     const Layer& get_layer(unsigned i) const {
         return this->layer_arr[i];
     }
-    float*** get_weights() const {
-        float*** out_arr = new float**[this->sz];
+    double*** get_weights() const {
+        double*** out_arr = new double**[this->sz];
         for (int i = 0; i < this->sz; i++) {
-            out_arr[i] = new float*[this->layer_arr[i].get_size()];
+            out_arr[i] = new double*[this->layer_arr[i].get_size()];
             for (int j = 0; j < this->layer_arr[i].get_size(); j++) {
                 out_arr[i][j] = this->layer_arr[i].get_arr()[j].get_weights(); 
             }
         }
         return out_arr;
     }
-    float** get_biases() const {
-        float** out_arr = new float*[this->sz];
+    double** get_biases() const {
+        double** out_arr = new double*[this->sz];
         for (int i = 0; i < this->sz; i++) {
-            out_arr[i] = new float[this->layer_arr[i].get_size()];
+            out_arr[i] = new double[this->layer_arr[i].get_size()];
             for (int j = 0; j < this->layer_arr[i].get_size(); j++) {
                 out_arr[i][j] = this->layer_arr[i].get_arr()[j].get_bias();
             }
         }
         return out_arr;
     }
-    void set_weights(float*** arg_weights) {
+    void set_weights(double*** arg_weights) {
         for (int i = 0; i < this->sz; i++) {
             for (int j = 0; j < this->layer_arr[i].get_size(); j++) {
                 this->layer_arr[i].get_arr()[j].set_weights(arg_weights[i][j]);
@@ -95,14 +95,14 @@ public:
     //      argument is a binary array that represents the input value
     // post-conditions:
     //      returns a binary array from the output neurons
-    float* operator()(bool* bin_arr_in) const {
+    double* operator()(bool* bin_arr_in) const {
         assert(this->layer_arr != nullptr);
         this->layer_arr[0].bin_init(bin_arr_in);
         for (int i = 0; i < this->sz - 1; i++) {
             this->layer_arr[i].fire();
         } 
         // get output from last layer
-        float* output = this->layer_arr[sz - 1].get_output();
+        double* output = this->layer_arr[sz - 1].get_output();
         this->layer_arr[sz - 1].reset_signal();
         //delete[] bin_arr_in;
         return output;
@@ -117,13 +117,13 @@ unsigned Network::get_size() const {
 const Layer& Network::get_layer(unsigned i) const {
     return this->pimpl->get_layer(i);
 }
-float*** Network::get_weights() const {
+double*** Network::get_weights() const {
     return this->pimpl->get_weights();
 }
-float** Network::get_biases() const {
+double** Network::get_biases() const {
     return this->pimpl->get_biases();
 }
-void Network::set_weights(float*** arg_wgts) {
+void Network::set_weights(double*** arg_wgts) {
     this->pimpl->set_weights(arg_wgts);
 }
 void Network::set_weights(std::vector<double> arg_wgts) {
@@ -140,7 +140,7 @@ Network::Network(const Network& arg_network) : pimpl(new Impl(arg_network)) {}
     unsigned unsigned_out = BinFuns::to_int(bin_arr_out);
     return unsigned_out;
 }*/
-float* Network::operator()(bool* arg_bits) const {
+double* Network::operator()(bool* arg_bits) const {
     return (*this->pimpl)(arg_bits);
 }
 Network::Network(int* layer_sz_arr, int network_sz) : pimpl(new Impl(layer_sz_arr, network_sz)) {}

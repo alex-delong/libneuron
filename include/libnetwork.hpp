@@ -12,15 +12,15 @@ namespace LibNeuron {
         Network(const Network&);
         unsigned get_size() const;
         const Layer& get_layer(unsigned) const;
-        float*** get_weights() const;
-        float** get_biases() const;
-        void set_weights(float***);
+        double*** get_weights() const;
+        double** get_biases() const;
+        void set_weights(double***);
         void set_weights(std::vector<double>);
         void set_biases(std::vector<double>);
         // initialize an array of sz layers, each with a size given by layer_sz_arr
         Network(int* layer_sz_arr, int sz);
         unsigned operator()(unsigned) const;
-        float* operator()(bool*) const;
+        double* operator()(bool*) const;
         ~Network();
     };
 }
