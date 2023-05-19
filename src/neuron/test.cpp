@@ -30,6 +30,17 @@ struct TestImpl : public NeuronImpl {
                 throw std::logic_error("get_weights() did not return the correct value");
             }
         }
+        delete[] test_out;
+    }
+    void test_get_bias() {
+        if (this->bias != this->get_bias()) {
+            throw std::logic_error("get_bias() did not return the correct value");
+        }
+    }
+    void test_get_input_signal() {
+        if (this->input_signal != this->get_input_signal()) {
+            throw std::logic_error("get_input_signal() did not return the correct value");
+        }
     }
 };
 
