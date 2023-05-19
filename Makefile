@@ -3,8 +3,7 @@
 
 INCLUDES=$(wildcard include/*.hpp)
 SRC=$(wildcard src/*)
-LIB_SRC=$(wildcard src/lib*.cpp)
-LIBS=$(patsubst src/lib%.cpp, lib/lib%.so, $(LIB_SRC))
+LIBS=$(patsubst src/%, lib/lib%.so, $(SRC))
 
 SRC_TEST_UNIT=$(wildcard test/src/test_unit_*.cpp)
 BIN_TEST_UNIT=$(patsubst test/src/test_unit_%.cpp, test/bin/test_unit_%, $(SRC_TEST_UNIT))
@@ -16,13 +15,11 @@ CXX=g++
 CXX_FLAGS=-Wall -I include -L lib -std=c++17 -O3
 DEPENDS=/usr/lib/libSimAnneal/libAnnealMD.so /usr/lib/libmatplot.so
 
-all: test-all libs
+all: test-all build
 
-libs: $(LIBS)
-
-$(LIBS) : lib/lib%.so : src/lib%.cpp include/lib%.hpp
+build: 
 	mkdir -p lib
-	$(CXX) $(CXX_FLAGS) -c $< -o $@
+	$(MAKE) -C src
 
 test-run: test-unit test-int
 	./test/bin/test_unit_neuron
