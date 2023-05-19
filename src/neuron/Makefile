@@ -6,6 +6,9 @@ LIB=libneuron.so
 CXX=g++
 CXX_FLAGS=-Wall -std=c++17 -O3 -I$(INCLUDE_DIR) -L$(LIB_DIR) -lneuron -ledge 
 
+clean:
+	rm -rf bin lib
+	mkdir bin lib
 
 build: $(LIB_DIR)/$(LIB)
 
