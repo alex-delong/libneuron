@@ -1,4 +1,4 @@
-#include <impl.hpp>
+#include <neuron/impl.hpp>
 
 using namespace LibNeuron;
 

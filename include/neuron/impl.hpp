@@ -1,8 +1,8 @@
 #ifndef NEURON_IMPL_HPP
 #define NEURON_IMPL_HPP
-#include <libneuron.hpp>
-#include <libedge.hpp>
-#include <libnetwork.hpp>
+#include <neuron/neuron.hpp>
+#include <edge/edge.hpp>
+#include <network/network.hpp>
 #include <algorithm>
 #include <cmath>
 #include <random>
