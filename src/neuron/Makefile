@@ -1,32 +1,34 @@
-.PHONY: build test clean 
+.PHONY: build test
+NAME=neuron
+
+BIN_DIR=../../bin
+TEST=$(BIN_DIR)/$(NAME)/test
+TEST_FLAGS=-L $(LIB_DIR)/$(NAME) -L $(LIB_DIR)/edge
 
 INCLUDE_DIR=../../include
+IMPL_HPP=$(INCLUDE_DIR)/$(NAME)/impl.hpp
+
 LIB_DIR=../../lib
-LIB=libneuron.so
+LIB=$(LIB_DIR)/$(NAME)/lib$(NAME).so
+LIB_IMPL=$(LIB_DIR)/$(NAME)/libimpl.so
+OBJ_TEST=$(LIB_DIR)/$(NAME)/test.o
+
 CXX=g++
-CXX_FLAGS=-Wall -std=c++17 -O3 -I include -I$(INCLUDE_DIR) -L lib  -L $(LIB_DIR)
+CXX_FLAGS=-Wall -std=c++17 -O3 -I$(INCLUDE_DIR) -L$(LIB_DIR)
 
-clean:
-	rm -rf bin lib
-	mkdir bin lib
+build: $(LIB)
 
-build: lib/libimpl.so $(LIB_DIR)/$(LIB)
+test: $(TEST)
 
-test: bin/test
 
-$(LIB_DIR)/$(LIB): lib/$(LIB)
-	cp lib/$(LIB) $(LIB_DIR)/$(LIB)
+$(LIB): lib.cpp $(IMPL_HPP)
+	$(CXX) $(CXX_FLAGS) -l impl -c lib.cpp -o $(LIB)
 
-lib/$(LIB): src/lib.cpp include/impl.hpp
-	$(CXX) $(CXX_FLAGS) -l impl -c src/lib.cpp -o lib/$(LIB)
+$(TEST): $(OBJ_TEST) $(LIB_IMPL)
+	$(CXX) $(CXX_FLAGS) $(TEST_FLAGS) -l neuron -l edge -l impl -l boost_unit_test_framework $(OBJ_TEST) -o $(TEST)
 
-bin/test: lib/test.o
-	mkdir -p bin
-	$(CXX) $(CXX_FLAGS) -l neuron -l edge -l impl -l boost_unit_test_framework lib/test.o -o bin/test
+$(OBJ_TEST): test.cpp $(IMPL_HPP)
+	$(CXX) $(CXX_FLAGS) -c test.cpp -o $(OBJ_TEST)
 
-lib/test.o: src/test.cpp include/impl.hpp
-	mkdir -p lib
-	$(CXX) $(CXX_FLAGS) -c src/test.cpp -o lib/test.o
-
-lib/libimpl.so: src/impl.cpp include/impl.hpp 
-	$(CXX) $(CXX_FLAGS) -c src/impl.cpp -o lib/libimpl.so
+$(LIB_IMPL): impl.cpp $(IMPL_HPP) 
+	$(CXX) $(CXX_FLAGS) -c impl.cpp -o $(LIB_IMPL)

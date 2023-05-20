@@ -2,15 +2,15 @@
 #define BOOST_TEST_NO_MAIN
 #define BOOST_TEST_DYN_LINK
 
-#include <libnetwork.hpp>
-#include <libneuron.hpp>
-#include <liblayer.hpp>
-#include <libedge.hpp>
+#include <network/network.hpp>
+#include <neuron/neuron.hpp>
+#include <layer/layer.hpp>
+#include <edge/edge.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/unit_test_parameters.hpp>
 #include <stdexcept>
 #include <random>
-#include <impl.hpp>
+#include <neuron/impl.hpp>
 
 struct TestImpl : public NeuronImpl {
     TestImpl() : NeuronImpl() {}
