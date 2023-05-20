@@ -10,7 +10,7 @@
 #include <boost/test/unit_test_parameters.hpp>
 #include <stdexcept>
 #include <random>
-#include "../include/impl.hpp"
+#include <impl.hpp>
 
 struct TestImpl : public NeuronImpl {
     TestImpl() : NeuronImpl() {}

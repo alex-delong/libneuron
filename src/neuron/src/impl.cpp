@@ -1,7 +1,6 @@
-#include "../include/impl.hpp"
+#include <impl.hpp>
 
 using namespace LibNeuron;
-
 
 NeuronImpl::NeuronImpl() : output_edges(nullptr), sz(0), input_signal(0.0), bias(0.0) {}
 NeuronImpl::NeuronImpl(Neuron* arg_neuron_arr, unsigned arg_sz) :  

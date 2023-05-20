@@ -1,7 +1,7 @@
 #include <libneuron.hpp>
-#include "lib.hpp"
 #include <libedge.hpp>
 #include <libnetwork.hpp>
+#include <impl.hpp>
 
 using namespace LibNeuron;
 struct Neuron::Impl : public NeuronImpl {
