@@ -1,5 +1,5 @@
-#include <libneuron.hpp>
-#include <libedge.hpp>
+#include <neuron/neuron.hpp>
+#include <edge/edge.hpp>
 using namespace LibNeuron;
 class Edge::Impl {
     Neuron* tip;
