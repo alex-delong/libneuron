@@ -1,14 +1,11 @@
 .PHONY: build test
 NAME=neuron
 
-BIN_DIR=../../bin
 TEST=$(BIN_DIR)/$(NAME)/test
 TEST_FLAGS=-L $(LIB_DIR)/$(NAME) -L $(LIB_DIR)/edge
 
-INCLUDE_DIR=../../include
 IMPL_HPP=$(INCLUDE_DIR)/$(NAME)/impl.hpp
 
-LIB_DIR=../../lib
 TARGET=$(ROOT)/lib/lib$(NAME).so
 OBJ_TEST=$(LIB_DIR)/$(NAME)/test.o
 
