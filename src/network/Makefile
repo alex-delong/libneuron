@@ -1,11 +1,17 @@
-.PHONY: build
+.PHONY: build test
 
-INCLUDE_DIR=../../include
-LIB_DIR=../../lib
-LIB=libnetwork
+MODULE:=network
+TARGET:=$(ROOT)/lib/lib$(MODULE).so
+TEST:=$(ROOT)/lib/test$(MODULE).o
+LDFLAGS:='-Wl,-rpath,$$ORIGIN'
+LIBFLAGS:=-g -fPIC -shared
 
+build: $(TARGET)
 
-build: $(LIB_DIR)/$(LIB).so
+test: $(TEST)
 
-$(LIB_DIR)/$(LIB).so: $(LIB).cpp
-	$(CXX) $(CXX_FLAGS) -c $(LIB).cpp -o $(LIB_DIR)/$(LIB).so
+$(TARGET): lib.cpp $(ROOT)/include/$(MODULE).hpp
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAGS) lib.cpp -o $(TARGET) 
+
+$(TEST): test.cpp $(ROOT)/include/$(MODULE).hpp
+	$(CXX) $(CXXFLAGS) -c test.cpp -o $(TEST)

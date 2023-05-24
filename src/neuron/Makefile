@@ -1,27 +1,17 @@
 .PHONY: build test
-NAME=neuron
 
-TEST=$(BIN_DIR)/$(NAME)/test
-TEST_FLAGS=-L $(LIB_DIR)/$(NAME) -L $(LIB_DIR)/edge
+MODULE:=neuron
+TARGET:=$(ROOT)/lib/lib$(MODULE).so
+TEST:=$(ROOT)/lib/test$(MODULE).o
+LDFLAGS:='-Wl,-rpath,$$ORIGIN'
+LIBFLAGS:=-g -fPIC -shared
 
-IMPL_HPP=$(INCLUDE_DIR)/$(NAME)/impl.hpp
-
-TARGET=$(ROOT)/lib/lib$(NAME).so
-OBJ_TEST=$(LIB_DIR)/$(NAME)/test.o
-
-build: $(LIB)
+build: $(TARGET)
 
 test: $(TEST)
 
+$(TARGET): lib.cpp $(ROOT)/include/$(MODULE).hpp
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAGS) lib.cpp -o $(TARGET) 
 
-$(LIB): lib.cpp $(IMPL_HPP)
-	$(CXX) $(CXX_FLAGS) -l impl -c lib.cpp -o $(LIB)
-
-$(TEST): $(OBJ_TEST) $(LIB_IMPL)
-	$(CXX) $(CXX_FLAGS) $(TEST_FLAGS) -l neuron -l edge -l impl -l boost_unit_test_framework $(OBJ_TEST) -o $(TEST)
-
-$(OBJ_TEST): test.cpp $(IMPL_HPP)
-	$(CXX) $(CXX_FLAGS) -c test.cpp -o $(OBJ_TEST)
-
-$(LIB_IMPL): impl.cpp $(IMPL_HPP) 
-	$(CXX) $(CXX_FLAGS) -c impl.cpp -o $(LIB_IMPL)
+$(TEST): test.cpp $(ROOT)/include/$(MODULE).hpp
+	$(CXX) $(CXXFLAGS) -c test.cpp -o $(TEST)
