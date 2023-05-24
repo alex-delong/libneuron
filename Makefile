@@ -13,7 +13,7 @@ OBJS_TEST_UNIT=$(patsubst test/src/test_unit_%.cpp, test/lib/test_unit_%.o, $(SR
 OBJS_TEST_INTEGRATION=test/lib/test_integration.o
 
 CXX=g++
-CXX_FLAGS=-Wall -I include -L lib -std=c++17 -O3
+CXX_FLAGS=-Wall -I $(ROOT)/include -L $(ROOT)/lib -std=c++17 -O3
 DEPENDS=/usr/lib/libSimAnneal/libAnnealMD.so /usr/lib/libmatplot.so
 
 all: test-all build
