@@ -4,6 +4,7 @@
 ROOT=$(CURDIR)
 INCLUDES=$(wildcard include/*.hpp)
 SRC=$(wildcard src/*)
+MOD:=$(patsubst src/%/, %, $(wildcard src/*/))
 LIBS=$(patsubst src/%, lib/lib%.so, $(SRC))
 
 SRC_TEST_UNIT=$(wildcard test/src/test_unit_*.cpp)
