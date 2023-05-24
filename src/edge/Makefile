@@ -3,7 +3,7 @@ NAME=edge
 
 BIN_DIR=../../bin
 TEST=$(BIN_DIR)/$(NAME)/test
-TEST_FLAGS=-L $(LIB_DIR)/$(NAME) -L $(LIB_DIR)/edge
+TEST_FLAGS=-L $(LIB_DIR)/$(NAME) -L $(LIB_DIR)/neuron
 
 INCLUDE_DIR=../../include
 IMPL_HPP=$(INCLUDE_DIR)/$(NAME)/impl.hpp
@@ -13,8 +13,6 @@ LIB=$(LIB_DIR)/$(NAME)/lib$(NAME).so
 LIB_IMPL=$(LIB_DIR)/$(NAME)/libimpl.so
 OBJ_TEST=$(LIB_DIR)/$(NAME)/test.o
 
-CXX=g++
-CXX_FLAGS=-Wall -std=c++17 -O3 -I$(INCLUDE_DIR) -L$(LIB_DIR)
 
 build: $(LIB)
 

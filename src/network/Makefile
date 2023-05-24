@@ -3,8 +3,7 @@
 INCLUDE_DIR=../../include
 LIB_DIR=../../lib
 LIB=libnetwork
-CXX=g++
-CXX_FLAGS=-Wall -std=c++17 -O3 -I $(INCLUDE_DIR) -L $(LIB_DIR)
+
 
 build: $(LIB_DIR)/$(LIB).so
 

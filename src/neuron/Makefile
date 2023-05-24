@@ -13,9 +13,6 @@ LIB=$(LIB_DIR)/$(NAME)/lib$(NAME).so
 LIB_IMPL=$(LIB_DIR)/$(NAME)/libimpl.so
 OBJ_TEST=$(LIB_DIR)/$(NAME)/test.o
 
-CXX=g++
-CXX_FLAGS=-Wall -std=c++17 -O3 -I$(INCLUDE_DIR) -L$(LIB_DIR)
-
 build: $(LIB)
 
 test: $(TEST)
