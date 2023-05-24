@@ -16,7 +16,7 @@ OBJS_TEST_INTEGRATION=test/lib/test_integration.o
 LDFLAGS:='-Wl,-z,relro,-z,now,-rpath,$$ORIGIN/../lib'
 LDLIBS:=$(patsubst %, -l %, $(MOD))
 CXX=g++
-CXX_FLAGS=-Wall -I $(ROOT)/include -L $(ROOT)/lib -std=c++17 -O3
+CXX_FLAGS=-std=c++17 -Wall -Wextra -I $(ROOT)/include -L $(ROOT)/lib -O3
 DEPENDS=/usr/lib/libSimAnneal/libAnnealMD.so /usr/lib/libmatplot.so
 
 all: test-all build
