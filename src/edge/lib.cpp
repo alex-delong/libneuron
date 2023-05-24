@@ -1,34 +1,8 @@
 #include <neuron/neuron.hpp>
 #include <edge/edge.hpp>
+#include <edge/impl.hpp>
 using namespace LibNeuron;
-class Edge::Impl {
-    Neuron* tip;
-    float weight;
-public:
-    Impl() : tip(nullptr), weight(0.0) {}
-    Impl(Neuron* tip, float w) : tip(tip), weight(w) {}
-    float get_weight() {
-        return this->weight;
-    }
-    void set_weight(float w) {
-        this->weight = w;
-    }
-    void set_tip(const Neuron& arg_neuron) {
-        this->tip = const_cast<Neuron*>(&arg_neuron);
-    }
-    void transmit(float signal) {
-        this->tip->signal_add(weight*signal);
-    }
-    Impl& operator=(const Impl& arg_impl) {
-        if (this == &arg_impl) {
-            return *this;
-        } 
-        this->tip = arg_impl.tip;
-        this->weight = arg_impl.weight;
-        return *this;
-    }
-    ~Impl() {}
-};
+class Edge::Impl : public Impl {}
 
 Edge::Edge() : pimpl(new Impl) {}
 Edge::Edge(Neuron* tip, float w) : pimpl(new Impl(tip, w)) {}
