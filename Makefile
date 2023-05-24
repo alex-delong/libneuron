@@ -24,6 +24,9 @@ build: conf
 conf:
 	mkdir -p bin lib
 
+clean:
+	rm -rf bin lib
+
 test-run: test-unit test-int
 	./test/bin/test_unit_neuron
 	./test/bin/test_integration
