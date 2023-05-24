@@ -2,10 +2,10 @@
 #define BOOST_TEST_NO_MAIN
 #define BOOST_TEST_DYN_LINK
 
-#include <libnetwork.hpp>
-#include <libneuron.hpp>
-#include <liblayer.hpp>
-#include <libedge.hpp>
+#include <network.hpp>
+#include <neuron.hpp>
+#include <layer.hpp>
+#include <edge.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/unit_test_parameters.hpp>
 #include <stdexcept>
