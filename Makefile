@@ -18,9 +18,11 @@ DEPENDS=/usr/lib/libSimAnneal/libAnnealMD.so /usr/lib/libmatplot.so
 
 all: test-all build
 
-build: 
-	mkdir -p lib
+build: conf 
 	$(MAKE) -C src
+
+conf:
+	mkdir -p bin lib
 
 test-run: test-unit test-int
 	./test/bin/test_unit_neuron
