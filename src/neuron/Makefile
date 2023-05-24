@@ -9,8 +9,7 @@ INCLUDE_DIR=../../include
 IMPL_HPP=$(INCLUDE_DIR)/$(NAME)/impl.hpp
 
 LIB_DIR=../../lib
-LIB=$(LIB_DIR)/$(NAME)/lib$(NAME).so
-LIB_IMPL=$(LIB_DIR)/$(NAME)/libimpl.so
+TARGET=$(ROOT)/lib/lib$(NAME).so
 OBJ_TEST=$(LIB_DIR)/$(NAME)/test.o
 
 build: $(LIB)
