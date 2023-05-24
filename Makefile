@@ -1,6 +1,7 @@
 # rules assume a single binary that depends on every library
 # assume binary source code is split between 1 or more files
 
+ROOT=$(CURDIR)
 INCLUDES=$(wildcard include/*.hpp)
 SRC=$(wildcard src/*)
 LIBS=$(patsubst src/%, lib/lib%.so, $(SRC))
