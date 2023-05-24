@@ -1,6 +1,6 @@
-#include <neuron/neuron.hpp>
-#include <edge/edge.hpp>
-#include <edge/impl.hpp>
+#include <neuron.hpp>
+#include <edge.hpp>
+#include "impl.hpp"
 using namespace LibNeuron;
 class Edge::Impl : public Impl {}
 

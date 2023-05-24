@@ -1,7 +1,7 @@
-#include <libneuron.hpp>
-#include <libnetwork.hpp>
-#include <liblayer.hpp>
-#include <libedge.hpp>
+#include <neuron.hpp>
+#include <network.hpp>
+#include <layer.hpp>
+#include <edge.hpp>
 #include <libSimAnneal/libAnnealMD.hpp>
 #include <random>
 #include <cmath>

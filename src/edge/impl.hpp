@@ -1,7 +1,7 @@
 #ifndef EDGE_IMPL_HPP
 #define EDGE_IMPL_HPP
-#include <edge/edge.hpp>
-#include <neuron/neuron.hpp>
+#include <edge.hpp>
+#include <neuron.hpp>
 using namespace LibNeuron;
 class Impl {
     Neuron* tip;

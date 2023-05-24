@@ -1,4 +1,4 @@
-#include <edge/impl.hpp>
+#include "impl.hpp"
 Impl::Impl() : tip(nullptr), weight(0.0) {}
 Impl::Impl(Neuron* tip, float w) : tip(tip), weight(w) {}
 float Impl::get_weight() {

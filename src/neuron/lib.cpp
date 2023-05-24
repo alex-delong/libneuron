@@ -1,7 +1,7 @@
-#include <neuron/neuron.hpp>
-#include <neuron/impl.hpp>
-#include <edge/edge.hpp>
-#include <network/network.hpp>
+#include <neuron.hpp>
+#include "impl.hpp"
+#include <edge.hpp>
+#include <network.hpp>
 
 
 using namespace LibNeuron;
