@@ -19,6 +19,8 @@ CXX=g++
 CXX_FLAGS=-std=c++17 -Wall -Wextra -I $(ROOT)/include -L $(ROOT)/lib -O3
 DEPENDS=/usr/lib/libSimAnneal/libAnnealMD.so /usr/lib/libmatplot.so
 
+export ROOT CXX CXXFLAGS MOD
+
 all: test-all build
 
 build: conf 
