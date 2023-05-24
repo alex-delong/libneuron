@@ -2,7 +2,10 @@
 #include <edge.hpp>
 #include "impl.hpp"
 using namespace LibNeuron;
-class Edge::Impl : public Impl {}
+struct Edge::Impl : public EdgeImpl {
+    Impl() : EdgeImpl() {}
+    Impl(Neuron* tip, float w) : EdgeImpl(tip, w) {}
+};
 
 Edge::Edge() : pimpl(new Impl) {}
 Edge::Edge(Neuron* tip, float w) : pimpl(new Impl(tip, w)) {}

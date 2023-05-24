@@ -1,19 +1,19 @@
 #include "impl.hpp"
-Impl::Impl() : tip(nullptr), weight(0.0) {}
-Impl::Impl(Neuron* tip, float w) : tip(tip), weight(w) {}
-float Impl::get_weight() {
+EdgeImpl::EdgeImpl() : tip(nullptr), weight(0.0) {}
+EdgeImpl::EdgeImpl(Neuron* tip, float w) : tip(tip), weight(w) {}
+float EdgeImpl::get_weight() {
     return this->weight;
 }
-void Impl::set_weight(float w) {
+void EdgeImpl::set_weight(float w) {
     this->weight = w;
 }
-void Impl::set_tip(const Neuron& arg_neuron) {
+void EdgeImpl::set_tip(const Neuron& arg_neuron) {
     this->tip = const_cast<Neuron*>(&arg_neuron);
 }
-void Impl::transmit(float signal) {
+void EdgeImpl::transmit(float signal) {
     this->tip->signal_add(weight*signal);
 }
-Impl& Impl::operator=(const Impl& arg_impl) {
+EdgeImpl& EdgeImpl::operator=(const EdgeImpl& arg_impl) {
     if (this == &arg_impl) {
         return *this;
     } 
@@ -21,4 +21,4 @@ Impl& Impl::operator=(const Impl& arg_impl) {
     this->weight = arg_impl.weight;
     return *this;
 }
-Impl::~Impl() {}
+EdgeImpl::~EdgeImpl() {}
