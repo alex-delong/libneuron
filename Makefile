@@ -1,66 +1,54 @@
-# rules assume a single binary that depends on every library
-# assume binary source code is split between 1 or more files
+.PHONY: run build clean test conf build-lib build-test
 
-ROOT=$(CURDIR)
-INCLUDES=$(wildcard include/*.hpp)
-SRC=$(wildcard src/*)
+ROOT:=$(CURDIR)
+SRC:=$(wildcard src/*.cpp)
 MOD:=$(patsubst src/%/, %, $(wildcard src/*/))
-LIBS=$(patsubst src/%, lib/lib%.so, $(SRC))
+OBJ:=$(patsubst src/%.cpp, lib/%.o, $(SRC))
+TESTOBJ:=$(patsubst %, lib/test%.o, $(MOD)) lib/testmain.o
+TESTBIN:=bin/test
+LIB:=$(patsubst %, lib/lib%.so, $(MOD))
+BIN:=bin/program
 
-SRC_TEST_UNIT=$(wildcard test/src/test_unit_*.cpp)
-BIN_TEST_UNIT=$(patsubst test/src/test_unit_%.cpp, test/bin/test_unit_%, $(SRC_TEST_UNIT))
-BIN_TEST_INTEGRATION=test/bin/test_integration
-OBJS_TEST_UNIT=$(patsubst test/src/test_unit_%.cpp, test/lib/test_unit_%.o, $(SRC_TEST_UNIT))
-OBJS_TEST_INTEGRATION=test/lib/test_integration.o
+CXX:=g++
+CXXFLAGS:=-std=c++17 -Wall -Wextra -I $(ROOT)/include -L $(ROOT)/lib
 
 LDFLAGS:='-Wl,-z,relro,-z,now,-rpath,$$ORIGIN/../lib'
 LDLIBS:=$(patsubst %, -l %, $(MOD))
-CXX=g++
-CXX_FLAGS=-std=c++17 -Wall -Wextra -I $(ROOT)/include -L $(ROOT)/lib -O3
-DEPENDS=/usr/lib/libSimAnneal/libAnnealMD.so /usr/lib/libmatplot.so
+BINFLAGS:=-fstack-protector -fPIE -pie
 
-export ROOT CXX CXXFLAGS MOD
+export ROOT MOD CXX CXXFLAGS
 
-all: test-all build
+run: build
+	./$(BIN)
 
-build: conf 
-	$(MAKE) -C src
+run-test: build-test
+	./$(TESTBIN)
 
-conf:
-	mkdir -p bin lib
+build: conf $(BIN)
 
 clean:
 	rm -rf bin lib
 
-test-run: test-unit test-int
-	./test/bin/test_unit_neuron
-	./test/bin/test_integration
+conf:
+	mkdir -p bin lib
 
-test-unit-run: test-unit
-	./test/bin/test_unit_neuron
+build-lib: conf
+	$(MAKE) build -e -C src
 
-test-int-run: test-int
-	./test/bin/test_integration
+build-test: $(TESTBIN)
 
-test-all: test-unit test-int
+$(BIN): $(OBJ) $(LIB)
+	$(CXX) $(CXXFLAGS) $(BINFLAGS) $(OBJ) $(LDFLAGS) $(LDLIBS) -o $(BIN) 
 
-test-unit: $(BIN_TEST_UNIT)
+$(OBJ): lib/%.o: src/%.cpp 
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-test-int: $(BIN_TEST_INTEGRATION)
+$(TESTOBJ): lib/test%.o: test/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(BIN_TEST_UNIT): test/bin/test_unit_% : test/lib/test_unit_%.o $(LIBS) #lib/lib%.so
-	mkdir -p test/bin
-	$(CXX) $(CXX_FLAGS) $^ -o $@
+$(TESTBIN): build-lib $(TESTOBJ)
+	$(CXX) $(CXXFLAGS) $(BINFLAGS) $(TESTOBJ) $(LDFLAGS) $(LDLIBS) -o $(TESTBIN)
 
-$(OBJS_TEST_UNIT) : test/lib/test_unit_%.o : test/src/test_unit_%.cpp include/lib%.hpp 
-	mkdir -p test/lib
-	$(CXX) $(CXX_FLAGS) -c $< -o $@ 
+$(LIB): build-lib
 
-$(BIN_TEST_INTEGRATION) : $(OBJS_TEST_INTEGRATION) $(LIBS) $(DEPENDS)
-	mkdir -p test/bin
-	$(CXX) $(CXX_FLAGS) $^ -o $@
-
-$(OBJS_TEST_INTEGRATION) : test/src/test_integration.cpp $(INCLUDES)
-	mkdir -p test/lib
-	$(CXX) $(CXX_FLAGS) -c test/src/test_integration.cpp -o $(OBJS_TEST_INTEGRATION)
 
