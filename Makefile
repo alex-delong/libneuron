@@ -14,6 +14,7 @@ OBJS_TEST_UNIT=$(patsubst test/src/test_unit_%.cpp, test/lib/test_unit_%.o, $(SR
 OBJS_TEST_INTEGRATION=test/lib/test_integration.o
 
 LDFLAGS:='-Wl,-z,relro,-z,now,-rpath,$$ORIGIN/../lib'
+LDLIBS:=$(patsubst %, -l %, $(MOD))
 CXX=g++
 CXX_FLAGS=-Wall -I $(ROOT)/include -L $(ROOT)/lib -std=c++17 -O3
 DEPENDS=/usr/lib/libSimAnneal/libAnnealMD.so /usr/lib/libmatplot.so
