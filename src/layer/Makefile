@@ -1,17 +1,19 @@
-.PHONY: build test
+.PHONY: build
 
 MODULE:=layer
 TARGET:=$(ROOT)/lib/lib$(MODULE).so
-TEST:=$(ROOT)/lib/test$(MODULE).o
+OBJ:=$(ROOT)/lib/$(MODULE).o
+IMPL:=$(ROOT)/lib/$(MODULE)impl.o
 LDFLAGS:='-Wl,-rpath,$$ORIGIN'
-LIBFLAGS:=-g -fPIC -shared
+OBJFLAGS:=-g -fPIC
 
 build: $(TARGET)
 
-test: $(TEST)
+$(TARGET): $(IMPL) $(OBJ)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(IMPL) $(OBJ) -o $(TARGET)
 
-$(TARGET): lib.cpp $(ROOT)/include/$(MODULE).hpp
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAGS) lib.cpp -o $(TARGET) 
+$(OBJ): lib.cpp impl.hpp $(ROOT)/include/$(MODULE).hpp
+	$(CXX) $(CXXFLAGS) $(OBJFLAGS) -c lib.cpp -o $(OBJ) 
 
-$(TEST): test.cpp $(ROOT)/include/$(MODULE).hpp
-	$(CXX) $(CXXFLAGS) -c test.cpp -o $(TEST)
+$(IMPL): impl.hpp impl.cpp 
+	$(CXX) $(CXXFLAGS) $(OBJFLAGS) -c impl.cpp -o $(IMPL)
