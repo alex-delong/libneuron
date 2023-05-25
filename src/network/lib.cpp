@@ -1,8 +1,8 @@
-#include <libnetwork.hpp>
-#include <libneuron.hpp>
-#include <liblayer.hpp>
-#include <libedge.hpp>
-#include <libbinfuns.hpp>
+#include <network.hpp>
+#include <neuron.hpp>
+#include <layer.hpp>
+#include <edge.hpp>
+#include <binfuns.hpp>
 #include <libSimAnneal/libAnnealMD.hpp>
 #include <assert.h>
 #include <random>
