@@ -1,7 +1,6 @@
-.PHONY: build 
-
-BUILDCMD:=$(patsubst %, $(MAKE) build -e -C %;, $(MOD))
+.PHONY: build
 
 export
 build:
-	$(BUILDCMD)
+	$(patsubst %, $(MAKE) build -e -C %;, $(MODS))
+

@@ -1,54 +1,47 @@
-.PHONY: run build clean test conf build-lib build-test
+.PHONY: all run build build-libs clean config test
 
 ROOT:=$(CURDIR)
-SRC:=$(wildcard src/*.cpp)
-MOD:=$(patsubst src/%/, %, $(wildcard src/*/))
-OBJ:=$(patsubst src/%.cpp, lib/%.o, $(SRC))
-TESTOBJ:=$(patsubst %, lib/test%.o, $(MOD)) lib/testmain.o
-TESTBIN:=bin/test
-LIB:=$(patsubst %, lib/lib%.so, $(MOD))
-BIN:=bin/program
+SRCS:=$(wildcard src/*.cpp)
+MODS:=$(patsubst src/%/, %, $(wildcard src/*/))
+OBJS:=$(patsubst src/%.cpp, lib/%.o, $(SRCS))
+LIBS:=$(patsubst %, lib/lib%.so, $(MODS))
+TARGET:=bin/program
+BUILDDIRS:=bin lib
 
 CXX:=g++
-CXXFLAGS:=-std=c++17 -Wall -Wextra -I $(ROOT)/include -L $(ROOT)/lib
+CXXFLAGS:=-std=c++17 -Wall -Wextra -fstack-protector -fPIE
+CPPFLAGS:= -I $(ROOT)/include
+LDFLAGS:='-Wl,-z,relro,-z,now,-rpath,$$ORIGIN/../lib' -L $(ROOT)/lib -o $(TARGET) -pie 
+LDLIBS:=$(patsubst %, -l %, $(MODS))
 
-LDFLAGS:='-Wl,-z,relro,-z,now,-rpath,$$ORIGIN/../lib'
-LDLIBS:=$(patsubst %, -l %, $(MOD))
-BINFLAGS:=-pie
-OBJFLAGS:=-fstack-protector -fPIE
+export ROOT MODS CXX CPPFLAGS
 
-export ROOT MOD CXX CXXFLAGS
+all: build test 
 
-run: build
-	./$(BIN)
+build: config $(TARGET)
 
-run-test: build-test
-	./$(TESTBIN)
+build-libs: config
+	$(MAKE) build -e -C src
 
-build: conf $(BIN)
+run: build 
+	./$(TARGET)
 
 clean:
 	rm -rf bin lib
 
-conf:
-	mkdir -p bin lib
+config: $(BUILDDIRS)
 
-build-lib: conf
-	$(MAKE) build -e -C src
+test: build-libs
+	$(MAKE) build -e -C test
+	./bin/test
 
-build-test: $(TESTBIN)
+$(BUILDDIRS):
+	mkdir -p $(BUILDDIRS)
 
-$(BIN): $(OBJ) $(LIB)
-	$(CXX) $(CXXFLAGS) $(BINFLAGS) $(OBJ) $(LDFLAGS) $(LDLIBS) -o $(BIN) 
+$(TARGET): $(OBJS) $(LIBS)
+	$(CXX) $(LDFLAGS) $(LDLIBS) $(OBJS) 
 
-$(OBJ): lib/%.o: src/%.cpp 
-	$(CXX) $(CXXFLAGS) $(OBJFLAGS) -c $< -o $@
+$(OBJS): lib/%.o: src/%.cpp 
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-$(TESTOBJ): lib/test%.o: test/%.cpp
-	$(CXX) $(CXXFLAGS) $(OBJFLAGS) -c $< -o $@
-
-$(TESTBIN): build-lib $(TESTOBJ)
-	$(CXX) $(CXXFLAGS) $(BINFLAGS) $(TESTOBJ) $(LDFLAGS) $(LDLIBS) -o $(TESTBIN)
-
-$(LIB): build-lib
-
+$(LIBS): build-libs
