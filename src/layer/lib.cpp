@@ -1,6 +1,6 @@
-#include <liblayer.hpp>
-#include <libneuron.hpp>
-#include <libnetwork.hpp>
+#include <layer.hpp>
+#include <neuron.hpp>
+#include <network.hpp>
 #include <functional>
 #include <random>
 #include <chrono>
