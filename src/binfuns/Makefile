@@ -1,13 +1,19 @@
 .PHONY: build
 
-INCLUDE_DIR=../../include
-LIB_DIR=../../lib
-LIB=libbinfuns
-CXX=g++
-CXX_FLAGS=-Wall -std=c++17 -O3 -I $(INCLUDE_DIR) -L $(LIB_DIR)
+MODULE:=binfuns
+TARGET:=$(ROOT)/lib/lib$(MODULE).so
+OBJ:=$(ROOT)/lib/$(MODULE).o
+IMPL:=$(ROOT)/lib/$(MODULE)impl.o
+LDFLAGS:='-Wl,-rpath,$$ORIGIN'
+OBJFLAGS:=-g -fPIC
 
-build: $(LIB_DIR)/$(LIB).so
+build: $(TARGET)
 
-$(LIB_DIR)/$(LIB).so: $(LIB).cpp 
-	$(CXX) $(CXX_FLAGS) -c $(LIB).cpp -o $(LIB_DIR)/$(LIB).so
-	
+$(TARGET): $(IMPL) $(OBJ)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(IMPL) $(OBJ) -o $(TARGET)
+
+$(OBJ): lib.cpp impl.hpp $(ROOT)/include/$(MODULE).hpp
+	$(CXX) $(CXXFLAGS) $(OBJFLAGS) -c lib.cpp -o $(OBJ) 
+
+$(IMPL): impl.hpp impl.cpp 
+	$(CXX) $(CXXFLAGS) $(OBJFLAGS) -c impl.cpp -o $(IMPL)

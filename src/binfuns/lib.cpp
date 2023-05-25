@@ -1,5 +1,5 @@
 #include <cmath>
-#include <libbinfuns.hpp>
+#include <binfuns.hpp>
 namespace BinFuns {
     bool is_odd(int i) {
         return i % 2 != 0;
