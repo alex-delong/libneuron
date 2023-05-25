@@ -1,4 +1,4 @@
-.PHONY: build test
+.PHONY: build 
 
 BUILDCMD:=$(patsubst %, $(MAKE) build -e -C %;, $(MOD))
 
