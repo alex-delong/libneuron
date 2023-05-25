@@ -11,106 +11,15 @@
 #include <cmath>
 #include <functional>
 #include <iostream>
+#include "impl.hpp"
 using namespace LibNeuron;
-class Network::Impl {
+class Network::Impl : public NetworkImpl {
 public:
-    Layer* layer_arr;
-    unsigned sz;
-    Impl() : layer_arr(nullptr), sz(0) {}
-    Impl(const Network& arg_network) : layer_arr(new Layer[arg_network.pimpl->sz]), sz(arg_network.pimpl->sz) {
-        for (int i = 0; i < this->sz; i++) {
-            this->layer_arr[i] = arg_network.pimpl->layer_arr[i];
-        }
-    }
-    Impl(int* layer_sz_arr, int network_sz) : layer_arr(new Layer[network_sz]), sz(network_sz) {
-        for (int i = 0; i < this->sz; i++) {
-            layer_arr[i] = Layer(layer_sz_arr[i]);
-        }
-        for (int i = 0; i < this->sz - 1; i++) {
-            layer_arr[i].connect(layer_arr[i + 1]);
-        }
-    }
-    unsigned get_size() const {
-        return this->sz;
-    }
-    const Layer& get_layer(unsigned i) const {
-        return this->layer_arr[i];
-    }
-    double*** get_weights() const {
-        double*** out_arr = new double**[this->sz];
-        for (int i = 0; i < this->sz; i++) {
-            out_arr[i] = new double*[this->layer_arr[i].get_size()];
-            for (int j = 0; j < this->layer_arr[i].get_size(); j++) {
-                out_arr[i][j] = this->layer_arr[i].get_arr()[j].get_weights(); 
-            }
-        }
-        return out_arr;
-    }
-    double** get_biases() const {
-        double** out_arr = new double*[this->sz];
-        for (int i = 0; i < this->sz; i++) {
-            out_arr[i] = new double[this->layer_arr[i].get_size()];
-            for (int j = 0; j < this->layer_arr[i].get_size(); j++) {
-                out_arr[i][j] = this->layer_arr[i].get_arr()[j].get_bias();
-            }
-        }
-        return out_arr;
-    }
-    void set_weights(double*** arg_weights) {
-        for (int i = 0; i < this->sz; i++) {
-            for (int j = 0; j < this->layer_arr[i].get_size(); j++) {
-                this->layer_arr[i].get_arr()[j].set_weights(arg_weights[i][j]);
-            }
-        }
-        delete[] arg_weights;
-    }
-    void set_weights(std::vector<double> arg_wgts) {
-        int curr = 0;
-        for (int i = 0; i < this->sz; i++) {
-            int j_max = this->layer_arr[i].get_size();
-            for (int j = 0; j < j_max; j++) {
-                int k_max = this->layer_arr[i].get_arr()[j].get_size();
-                for (int k = 0; k < k_max; k++) {
-                    this->layer_arr[i].get_arr()[j].get_edges()[k].set_weight(arg_wgts[curr]);
-                    curr += 1;
-                }
-            }
-        }
-    }
-    void set_biases(std::vector<double> arg_biases) {
-        int curr = 0;
-        for (int i = 0; i < this->sz; i++) {
-            int j_max = this->layer_arr[i].get_size();
-            for (int j = 0; j < j_max; j++) {
-                this->layer_arr[i].get_arr()[j].set_bias(arg_biases[curr]);
-                curr += 1;
-            }
-        }
-    }
-    // TODO: void add_layer(const Layer& arg_layer) {}
-    // TODO: void add_layers(int* layer_sz_arr, int num_layers) {}
-
-    // for a given binary value as input, return the final processed output binary value
-    // pre-conditions:
-    //      argument is a binary array that represents the input value
-    // post-conditions:
-    //      returns a binary array from the output neurons
-    double* operator()(bool* bin_arr_in) const {
-        assert(this->layer_arr != nullptr);
-        this->layer_arr[0].bin_init(bin_arr_in);
-        for (int i = 0; i < this->sz - 1; i++) {
-            this->layer_arr[i].fire();
-        } 
-        // get output from last layer
-        double* output = this->layer_arr[sz - 1].get_output();
-        this->layer_arr[sz - 1].reset_signal();
-        //delete[] bin_arr_in;
-        return output;
-    }
-    ~Impl() {
-        delete[] this->layer_arr;
-    }
+    Impl() : NetworkImpl() {}
+    Impl(const Network& arg_network) : NetworkImpl(arg_network) {}
+    Impl(int* layer_sz_arr, int network_sz) : NetworkImpl(layer_sz_arr, network_sz) {}
 };
+
 unsigned Network::get_size() const {
     return this->pimpl->get_size();
 }
