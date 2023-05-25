@@ -14,7 +14,8 @@ CXXFLAGS:=-std=c++17 -Wall -Wextra -I $(ROOT)/include -L $(ROOT)/lib
 
 LDFLAGS:='-Wl,-z,relro,-z,now,-rpath,$$ORIGIN/../lib'
 LDLIBS:=$(patsubst %, -l %, $(MOD))
-BINFLAGS:=-fstack-protector -fPIE -pie
+BINFLAGS:=-pie
+OBJFLAGS:=-fstack-protector -fPIE
 
 export ROOT MOD CXX CXXFLAGS
 
@@ -41,14 +42,13 @@ $(BIN): $(OBJ) $(LIB)
 	$(CXX) $(CXXFLAGS) $(BINFLAGS) $(OBJ) $(LDFLAGS) $(LDLIBS) -o $(BIN) 
 
 $(OBJ): lib/%.o: src/%.cpp 
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(OBJFLAGS) -c $< -o $@
 
 $(TESTOBJ): lib/test%.o: test/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(OBJFLAGS) -c $< -o $@
 
 $(TESTBIN): build-lib $(TESTOBJ)
 	$(CXX) $(CXXFLAGS) $(BINFLAGS) $(TESTOBJ) $(LDFLAGS) $(LDLIBS) -o $(TESTBIN)
 
 $(LIB): build-lib
-
 
