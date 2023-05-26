@@ -3,7 +3,7 @@
 #include <layer.hpp>
 #include <edge.hpp>
 #include <binfuns.hpp>
-#include <libSimAnneal/libAnnealMD.hpp>
+#include <libAnnealMD.hpp>
 #include <assert.h>
 #include <random>
 #include <chrono>

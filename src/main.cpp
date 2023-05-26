@@ -2,7 +2,7 @@
 #include <network.hpp>
 #include <layer.hpp>
 #include <edge.hpp>
-#include <libSimAnneal/libAnnealMD.hpp>
+#include <libAnnealMD.hpp>
 #include <random>
 #include <cmath>
 #include <iostream>
