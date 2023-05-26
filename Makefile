@@ -12,7 +12,7 @@ CXX:=g++
 CXXFLAGS:=-std=c++17 -Wall -Wextra -fstack-protector -fPIE
 CPPFLAGS:= -I $(ROOT)/include
 LDFLAGS:='-Wl,-z,relro,-z,now,-rpath,$$ORIGIN/../lib' -L $(ROOT)/lib -o $(TARGET) -pie 
-LDLIBS:=$(patsubst %, -l %, $(MODS))
+LDLIBS:=$(patsubst %, -l %, $(MODS)) -l AnnealMD
 
 export ROOT MODS CXX CPPFLAGS
 
