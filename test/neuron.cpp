@@ -14,12 +14,12 @@ using namespace LibNeuron;
 BOOST_AUTO_TEST_SUITE(NeuronTestSuite)
 
 BOOST_AUTO_TEST_CASE(getters) {
-    TestImpl impl;
-    impl.test_get_edges();
-    impl.test_get_size();
-    //impl.test_get_weights();
-    impl.test_get_bias();
-    impl.test_get_input_signal();    
+    NeuronTest nt;
+    nt.test_get_edges()
+      .test_get_size()
+      .test_get_weights()
+      .test_get_bias()
+      .test_get_input_signal();   
 }
 
 BOOST_AUTO_TEST_CASE(constructors_test) {

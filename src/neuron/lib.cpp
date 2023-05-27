@@ -1,14 +1,13 @@
 #include <neuron.hpp>
 #include "impl.hpp"
+#include "lib.hpp"
 #include <edge.hpp>
 #include <network.hpp>
 
 
 using namespace LibNeuron;
-struct Neuron::Impl : public NeuronImpl {
-    Impl() : NeuronImpl() {}
-    Impl(Neuron* arg_neuron_arr, unsigned arg_sz) : NeuronImpl(arg_neuron_arr, arg_sz) {}
-};
+Neuron::Impl::Impl() : NeuronImpl() {}
+Neuron::Impl::Impl(Neuron* arg_neuron_arr, unsigned arg_sz) : NeuronImpl(arg_neuron_arr, arg_sz) {}
 
 Neuron::Neuron() : pimpl(new Impl) {}
 Neuron::Neuron(Neuron* arg_neuron_arr, unsigned int arg_sz) : pimpl(new Impl(arg_neuron_arr, arg_sz)) {}
