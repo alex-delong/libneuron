@@ -14,7 +14,7 @@ build: config $(TARGET)
 $(TARGET): $(OBJS) 
 	$(CXX) $(LDFLAGS) $(OBJS)
 
-$(OBJS): $(ROOT)/lib/$(MODULE)/%.o : %.cpp $(wildcard ./*.hpp) $(ROOT)/include/$(MODULE).hpp
+$(OBJS): $(ROOT)/lib/$(MODULE)/%.o : %.cpp impl.hpp $(ROOT)/include/$(MODULE).hpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 $(ROOT)/lib/$(MODULE):
